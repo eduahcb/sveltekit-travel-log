@@ -1,6 +1,25 @@
-<h1>Welcome to SvelteKit</h1>
+<script lang="ts">
+  import { Github } from "@lucide/svelte";
+</script>
 
-<p>
-  Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the
-  documentation
-</p>
+<main class="container mx-auto min-h-96 my-6">
+  <div class="min-h-100 bg-surface-100-900 flex justify-center">
+    <div
+      class="p-6 min-h-96 text-center flex flex-col justify-center max-w-md gap-8"
+    >
+      <h2 class="h2">Travel Log</h2>
+
+      <p>
+        Keep track of your travels and adventures. Add locations, photos, and
+        notes to create a digital journal of your journeys
+      </p>
+
+      <div>
+        <button type="button" class="btn preset-filled-primary-500">
+          Sign In With Github
+          <Github size={20} />
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
