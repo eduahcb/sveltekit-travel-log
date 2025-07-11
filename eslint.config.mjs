@@ -12,5 +12,6 @@ export default antfu({
 
   ignores: [
     "vite.config.ts",
+    "**/migrationos/**",
   ],
 });
