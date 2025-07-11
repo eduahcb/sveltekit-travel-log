@@ -10,7 +10,7 @@
     <a href="/" class="anchor font-bold text-xl">Travel Log</a>
   {/snippet}
   {#snippet trail()}
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-4">
       <ThemeButton />
       <button type="button" class="btn preset-filled-primary-500">
         <span class="text-white"> Sign In With Github </span>

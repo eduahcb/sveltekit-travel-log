@@ -34,12 +34,12 @@
     checked={isLight}
     onchange={toggleTheme}
   />
-  <button title="moon icon" aria-label="moonicon" class="swap-on">
+  <div title="moon icon" aria-label="moonicon" class="swap-on">
     <Moon size={24} />
-  </button>
-  <button class="swap-off" title="sun icon" aria-label="sun icon">
+  </div>
+  <div class="swap-off" title="sun icon" aria-label="sun icon">
     <Sun size={24} />
-  </button>
+  </div>
 </label>
 
 <style>
