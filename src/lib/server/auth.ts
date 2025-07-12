@@ -1,3 +1,5 @@
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, VERCEL_URL } from "$env/static/private";
+
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
@@ -7,4 +9,16 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
+  advanced: {
+    database: {
+      generateId: false,
+    },
+  },
+  socialProviders: {
+    github: {
+      clientId: GITHUB_CLIENT_ID as string,
+      clientSecret: GITHUB_CLIENT_SECRET as string,
+    },
+  },
+  trustedOrigins: [`https://${VERCEL_URL}`],
 });
