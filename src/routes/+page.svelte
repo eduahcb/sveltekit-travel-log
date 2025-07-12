@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Github } from "@lucide/svelte";
+  import AuthButton from "$lib/components/AuthButton.svelte";
 </script>
 
 <main class="container mx-auto min-h-96 my-6">
@@ -15,10 +15,7 @@
       </p>
 
       <div>
-        <button type="button" class="btn preset-filled-primary-500">
-          <span class="text-white"> Sign In With Github </span>
-          <Github size={20} class="text-white" />
-        </button>
+        <AuthButton />
       </div>
     </div>
   </div>
