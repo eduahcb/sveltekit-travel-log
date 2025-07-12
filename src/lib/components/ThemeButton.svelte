@@ -19,25 +19,17 @@
   }
 </script>
 
-<svelte:head>
-  <script>
-    const mode = localStorage.getItem("mode") ?? "dark";
-    document.documentElement.dataset.mode = mode;
-    localStorage.setItem("mode", mode);
-  </script>
-</svelte:head>
-
-<label for="color-mode" class="swap">
+<label for="color-mode" class="swap" aria-label="toggle theme">
   <input
     id="color-mode"
     type="checkbox"
     checked={isLight}
     onchange={toggleTheme}
   />
-  <div title="moon icon" aria-label="moonicon" class="swap-on">
+  <div class="swap-on">
     <Moon size={24} />
   </div>
-  <div class="swap-off" title="sun icon" aria-label="sun icon">
+  <div class="swap-off">
     <Sun size={24} />
   </div>
 </label>
@@ -63,8 +55,8 @@
     opacity: 0;
     transform: rotate(-50deg);
     transition:
-      transform 0.4s ease-in-out,
-      opacity 0.1s ease-in 0.25s;
+      transform 0.2s ease-in-out,
+      opacity 0.1s ease-in 0.025s;
   }
 
   .swap-off {
@@ -72,8 +64,8 @@
     opacity: 1;
     transform: rotate(0deg);
     transition:
-      transform 0.4s ease-in-out,
-      opacity 0.2s ease-in 0.2s;
+      transform 0.2s ease-in-out,
+      opacity 0.1s ease-in 0.025s;
   }
 
   .swap input:checked ~ .swap-on {
