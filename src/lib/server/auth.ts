@@ -1,4 +1,4 @@
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "$env/static/private";
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, VERCEL_URL } from "$env/static/private";
 
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -20,4 +20,5 @@ export const auth = betterAuth({
       clientSecret: GITHUB_CLIENT_SECRET as string,
     },
   },
+  trustedOrigins: [`https://${VERCEL_URL}`],
 });
