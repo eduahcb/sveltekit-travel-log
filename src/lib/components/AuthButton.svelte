@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authClient, signIn } from "$lib/aut-client";
-  import { Github, LoaderCircle } from "@lucide/svelte";
+  import { Github, LoaderCircle, LogOut } from "@lucide/svelte";
   import { Avatar, Popover } from "@skeletonlabs/skeleton-svelte";
 
   const session = authClient.useSession();
@@ -29,7 +29,11 @@
       {$session?.data?.user.name}
     {/snippet}
     {#snippet content()}
-      <a href="/sign-out" class="btn btn-sm preset-filled-primary-500 pointer">
+      <a
+        href="/sign-out"
+        class="btn btn-base preset-filled-primary-500 pointer"
+      >
+        <LogOut size={24} />
         Sign Out
       </a>
     {/snippet}
