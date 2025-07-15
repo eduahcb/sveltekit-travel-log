@@ -4,7 +4,7 @@ export default antfu({
   type: "app",
   formatters: true,
   svelte: true,
-  tpescript: true,
+  typescript: true,
   stylistic: {
     quotes: "double",
     semi: true,
@@ -14,4 +14,7 @@ export default antfu({
     "vite.config.ts",
     "**/migrationos/**",
   ],
+  rules: {
+    "style/arrow-parens": "off",
+  },
 });
