@@ -14,7 +14,7 @@
         notes to create a digital journal of your journeys
       </p>
 
-      <div>
+      <div class="flex justify-center">
         <AuthButton />
       </div>
     </div>
