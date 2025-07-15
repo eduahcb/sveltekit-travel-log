@@ -1,3 +1,4 @@
+import { goto } from "$app/navigation";
 import { createAuthClient } from "better-auth/svelte"; // make sure to import from better-auth/svelte
 
 export const authClient = createAuthClient({});
@@ -8,4 +9,9 @@ export async function signIn() {
     callbackURL: "/dashboard",
     errorCallbackURL: "/error",
   });
+}
+
+export async function signOut() {
+  await authClient.signOut();
+  goto("/");
 }
