@@ -1,5 +1,8 @@
 <script lang="ts">
   import AuthButton from "$lib/components/AuthButton.svelte";
+  import { getAuthContext } from "$lib/context/auth";
+
+  const store = getAuthContext();
 </script>
 
 <main class="container mx-auto min-h-96 my-6">
@@ -15,7 +18,13 @@
       </p>
 
       <div class="flex justify-center">
-        <AuthButton />
+        {#if !store.user.value}
+          <AuthButton />
+        {:else}
+          <a href="/dashboard" class="btn preset-filled-primary-500">
+            Start Logging
+          </a>
+        {/if}
       </div>
     </div>
   </div>

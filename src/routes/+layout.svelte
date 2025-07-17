@@ -1,8 +1,16 @@
 <script lang="ts">
+  import type { LayoutProps } from "./$types";
   import Navbar from "$lib/components/Navbar.svelte";
+
+  import { setAuthContext } from "$lib/context/auth";
+  import { createAuthStore } from "$lib/stores/auth.svelte";
   import "../app.css";
 
-  const { children } = $props();
+  const { children, data }: LayoutProps = $props();
+
+  const store = createAuthStore(data.session);
+
+  setAuthContext(store);
 </script>
 
 <div class="min-h-screen">

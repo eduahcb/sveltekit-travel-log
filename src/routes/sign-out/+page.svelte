@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { signOut } from "$lib/aut-client";
+  import { getAuthContext } from "$lib/context/auth";
   import { LoaderCircle } from "@lucide/svelte";
+
+  const store = getAuthContext();
 
   import { onMount } from "svelte";
 
   onMount(async () => {
-    await signOut();
+    await store.signOut();
   });
 </script>
 
