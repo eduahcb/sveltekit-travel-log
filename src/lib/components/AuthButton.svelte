@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { authClient, signIn } from "$lib/aut-client";
+  import { getAuthContext } from "$lib/context/auth";
   import { Github, LoaderCircle, LogOut } from "@lucide/svelte";
   import { Avatar, Popover } from "@skeletonlabs/skeleton-svelte";
 
-  const session = authClient.useSession();
+  const store = getAuthContext();
 
   let open = $state(false);
 </script>
 
-{#if !$session.isPending && $session?.data?.user}
+{#if store.user.value}
   <Popover
     {open}
     onOpenChange={(e) => (open = e.open)}
@@ -19,14 +19,14 @@
     arrowBackground="!bg-surface-200 dark:!bg-surface-800"
   >
     {#snippet trigger()}
-      {#if $session?.data?.user.image}
+      {#if store.user.value?.image}
         <Avatar
-          src={$session?.data?.user.image}
-          name={$session?.data?.user.name}
+          src={store.user.value.image}
+          name={store.user.value.name}
           size="size-8"
         ></Avatar>
       {/if}
-      {$session?.data?.user.name}
+      {store.user.value?.name}
     {/snippet}
     {#snippet content()}
       <a
@@ -40,14 +40,14 @@
   </Popover>
 {:else}
   <button
-    onclick={signIn}
+    onclick={store.signIn}
     type="button"
     class="btn preset-filled-primary-500"
-    disabled={$session.isPending}
+    disabled={store.loading.value}
   >
     <span class="text-white"> Sign In With Github </span>
 
-    {#if $session.isPending}
+    {#if store.loading.value}
       <LoaderCircle class="animate-spin" />
     {:else}
       <Github size={20} class="text-white" />
