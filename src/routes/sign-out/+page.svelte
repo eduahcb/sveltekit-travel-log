@@ -7,7 +7,7 @@
   import { onMount } from "svelte";
 
   onMount(async () => {
-    await store.signOut();
+    await store().signOut();
   });
 </script>
 

@@ -4,12 +4,12 @@ import { goto } from "$app/navigation";
 import { authClient } from "$lib/aut-client";
 
 export function createAuthStore(session: Session) {
-  const user = $state({ value: session?.user || null });
+  let user = $state(session?.user || null);
 
-  const loading = $state({ value: false });
+  let loading = $state(false);
 
   const signIn = async () => {
-    loading.value = true;
+    loading = true;
 
     await authClient.signIn.social({
       provider: "github",
@@ -17,22 +17,26 @@ export function createAuthStore(session: Session) {
       errorCallbackURL: "/error",
     });
 
-    loading.value = false;
+    loading = false;
   };
 
   const signOut = async () => {
-    loading.value = true;
+    loading = true;
     await authClient.signOut();
 
-    loading.value = false;
-    user.value = null;
+    loading = false;
+    user = null;
 
     goto("/");
   };
 
   return {
-    user,
-    loading,
+    get user() {
+      return user;
+    },
+    get loading() {
+      return loading;
+    },
     signIn,
     signOut,
   };
