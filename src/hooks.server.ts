@@ -6,11 +6,13 @@ import { redirect } from "@sveltejs/kit";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
-  if (event.url.pathname.startsWith("/dashboard")) {
-    const session = await auth.api.getSession({
-      headers: event.request.headers,
-    });
+  const session = await auth.api.getSession({
+    headers: event.request.headers,
+  });
 
+  event.locals.session = session;
+
+  if (event.url.pathname.startsWith("/dashboard")) {
     if (!session?.user) {
       redirect(302, "/");
     }
