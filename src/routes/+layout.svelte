@@ -13,7 +13,7 @@
   setAuthContext(store);
 </script>
 
-<div class="min-h-screen">
+<div class="min-h-screen flex flex-col gap-1">
   <Navbar />
   {@render children()}
 </div>
