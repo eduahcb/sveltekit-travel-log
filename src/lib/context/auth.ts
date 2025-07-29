@@ -7,9 +7,9 @@ type Store = ReturnType<typeof createAuthStore>;
 const AUTH_CONTEXT_KEY = "authContext";
 
 export function setAuthContext(store: Store) {
-  return setContext(AUTH_CONTEXT_KEY, store);
+  setContext(AUTH_CONTEXT_KEY, () => store);
 }
 
-export function getAuthContext(): Store {
-  return getContext(AUTH_CONTEXT_KEY) as Store;
+export function getAuthContext(): () => Store {
+  return getContext(AUTH_CONTEXT_KEY) as () => Store;
 }

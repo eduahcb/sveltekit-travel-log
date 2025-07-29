@@ -18,7 +18,7 @@
       </p>
 
       <div class="flex justify-center">
-        {#if !store.user.value}
+        {#if !store().user}
           <AuthButton />
         {:else}
           <a href="/dashboard" class="btn preset-filled-primary-500">

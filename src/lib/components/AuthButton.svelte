@@ -8,7 +8,7 @@
   let open = $state(false);
 </script>
 
-{#if store.user.value}
+{#if store().user}
   <Popover
     {open}
     onOpenChange={(e) => (open = e.open)}
@@ -19,14 +19,14 @@
     arrowBackground="!bg-surface-200 dark:!bg-surface-800"
   >
     {#snippet trigger()}
-      {#if store.user.value?.image}
+      {#if store().user?.image}
         <Avatar
-          src={store.user.value.image}
-          name={store.user.value.name}
+          src={store().user?.image || ""}
+          name={store().user?.name || ""}
           size="size-8"
         ></Avatar>
       {/if}
-      {store.user.value?.name}
+      {store().user?.name}
     {/snippet}
     {#snippet content()}
       <a
@@ -40,14 +40,14 @@
   </Popover>
 {:else}
   <button
-    onclick={store.signIn}
+    onclick={store().signIn}
     type="button"
     class="btn preset-filled-primary-500"
-    disabled={store.loading.value}
+    disabled={store().loading}
   >
     <span class="text-white"> Sign In With Github </span>
 
-    {#if store.loading.value}
+    {#if store().loading}
       <LoaderCircle class="animate-spin" />
     {:else}
       <Github size={20} class="text-white" />
