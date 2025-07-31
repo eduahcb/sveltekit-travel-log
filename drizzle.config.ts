@@ -3,7 +3,7 @@ import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
   out: "./src/lib/server/db/migrations",
-  schema: "./src/lib/server/db/schema/index.ts",
+  schema: "./src/lib/schema/index.ts",
   casing: "snake_case",
   dialect: "turso",
   dbCredentials: {

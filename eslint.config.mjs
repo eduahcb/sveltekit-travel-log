@@ -12,7 +12,7 @@ export default antfu({
 
   ignores: [
     "vite.config.ts",
-    "**/migrationos/**",
+    "**/migrations/**",
   ],
   rules: {
     "style/arrow-parens": "off",
