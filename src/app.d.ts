@@ -11,7 +11,9 @@ declare global {
       session: Session;
     }
     // interface PageData {}
-    // interface PageState {}
+    interface PageState {
+      showDialog: boolean;
+    }
     // interface Platform {}
   }
 }

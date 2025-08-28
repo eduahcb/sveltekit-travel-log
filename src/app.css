@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@import "tailwindcss";
+@plugin "@tailwindcss/forms" {
+  strategy: "class";
+}
 
 @import "@skeletonlabs/skeleton";
 @import "@skeletonlabs/skeleton/optional/presets";

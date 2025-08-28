@@ -1,10 +1,23 @@
 <script lang="ts">
   import type { LayoutProps } from "./$types";
+  import { browser } from "$app/environment";
+
   import Navbar from "$lib/components/Navbar.svelte";
 
   import { setAuthContext } from "$lib/context/auth";
+
   import { createAuthStore } from "$lib/stores/auth.svelte";
+  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+
   import "../app.css";
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        enabled: browser,
+      },
+    },
+  });
 
   const { children, data }: LayoutProps = $props();
 
@@ -13,10 +26,12 @@
   setAuthContext(store);
 </script>
 
-<div class="min-h-screen flex flex-col gap-1">
-  <Navbar />
-  {@render children()}
-</div>
+<QueryClientProvider client={queryClient}>
+  <div class="min-h-screen flex flex-col gap-1">
+    <Navbar />
+    {@render children()}
+  </div>
+</QueryClientProvider>
 
 <svelte:head>
   <title>Sveltekit Travel Log</title>
