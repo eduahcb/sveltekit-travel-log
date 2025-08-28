@@ -16,5 +16,6 @@ export default antfu({
   ],
   rules: {
     "style/arrow-parens": "off",
+    "style/brace-style": "off",
   },
 });

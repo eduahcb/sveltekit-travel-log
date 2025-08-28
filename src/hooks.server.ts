@@ -12,10 +12,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   event.locals.session = session;
 
-  if (event.url.pathname.startsWith("/dashboard")) {
-    if (!session?.user) {
-      redirect(302, "/");
-    }
+  if (event.url.pathname.startsWith("/dashboard") && !session?.user) {
+    redirect(302, "/");
   }
 
   return svelteKitHandler({ event, auth, resolve });

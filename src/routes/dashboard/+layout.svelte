@@ -13,7 +13,7 @@
   }
 </script>
 
-<main class="flex-1 flex gap-4">
+<main class="flex-1 flex gap-1">
   <div>
     <Navigation.Rail
       expanded={isExpansed}
@@ -36,19 +36,22 @@
           <Map />
         </NavItem>
 
-        <NavItem href="#" label="Add Location">
+        <NavItem href="/dashboard/add" label="Add Location">
           <Plus />
         </NavItem>
       {/snippet}
 
       {#snippet footer()}
-        <NavItem href="#" label="Sign Out">
+        <NavItem href="/sign-out" label="Sign Out">
           <LogOut />
         </NavItem>
       {/snippet}
     </Navigation.Rail>
   </div>
-  <div class="flex-1">
-    {@render children()}
+  <div class="flex-1 grid grid-cols-[400px_auto]">
+    <div>
+      {@render children()}
+    </div>
+    <div></div>
   </div>
 </main>
