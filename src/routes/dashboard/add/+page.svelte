@@ -1,9 +1,7 @@
 <script lang="ts">
   import type { LocationInsertData } from "$lib/types";
   import type { SuperValidated } from "sveltekit-superforms";
-  import { beforeNavigate, goto, pushState } from "$app/navigation";
-
-  import { page } from "$app/state";
+  import { beforeNavigate, goto } from "$app/navigation";
 
   import ConfirmModal from "$lib/components/ConfirmModal.svelte";
 
@@ -28,7 +26,7 @@
 
   import { valibot } from "sveltekit-superforms/adapters";
 
-  const open = $derived(page.state.showDialog ?? false);
+  let open = $state(false);
 
   const initialData = {
     name: "",
@@ -58,10 +56,8 @@
 
   beforeNavigate(({ cancel }) => {
     if (isTainted()) {
-      pushState("", {
-        showDialog: true,
-      });
       cancel();
+      open = true;
     }
   });
 
@@ -75,7 +71,7 @@
   }
 
   function onModalCancel() {
-    history.back();
+    open = false;
   }
 
   async function addLocation(form: SuperValidated<LocationInsertData>) {
