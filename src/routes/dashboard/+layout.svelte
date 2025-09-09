@@ -32,7 +32,7 @@
       {/snippet}
 
       {#snippet tiles()}
-        <NavItem href="#" label="Locations">
+        <NavItem href="/dashboard" label="Locations">
           <Map />
         </NavItem>
 
