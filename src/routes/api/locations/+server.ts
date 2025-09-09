@@ -1,16 +1,14 @@
 import type { DrizzleQueryError } from "drizzle-orm/errors";
 
-import { location } from "$lib/schema";
-
 import { LocationInsertSchema } from "$lib/schema/location";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
 
-import db from "$lib/server/db";
-
+import { insertLocation } from "$lib/server/db/queries/location";
 import { formatValibotIssues } from "$lib/utils/valibot-format-error";
-import { json } from "@sveltejs/kit";
 
+import { json } from "@sveltejs/kit";
 import slugify from "slug";
+
 import * as v from "valibot";
 
 export const POST = AuthenticatedRequestHandler(async ({ request, locals }) => {
@@ -29,11 +27,7 @@ export const POST = AuthenticatedRequestHandler(async ({ request, locals }) => {
   const userId = Number(locals.session?.user.id);
 
   try {
-    const [created] = await db.insert(location).values({
-      ...validatedData,
-      slug,
-      userId,
-    }).returning();
+    const created = await insertLocation(validatedData, slug, userId);
 
     return json(created, { status: 201 });
   } catch (e) {
