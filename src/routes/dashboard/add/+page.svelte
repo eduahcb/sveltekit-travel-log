@@ -27,6 +27,7 @@
   import { valibot } from "sveltekit-superforms/adapters";
 
   let open = $state(false);
+  let destination = "/dashboard";
 
   const initialData = {
     name: "",
@@ -54,10 +55,13 @@
     },
   );
 
-  beforeNavigate(({ cancel }) => {
-    if (isTainted()) {
+  beforeNavigate(({ cancel, from, to }) => {
+    const isDiffPage = from?.url.pathname !== to?.url.pathname;
+
+    if (isTainted() && isDiffPage) {
       cancel();
       open = true;
+      destination = to?.url.pathname ?? "/dashboard";
     }
   });
 
@@ -67,7 +71,7 @@
 
   function onConfirm() {
     reset();
-    goto("/dashboard");
+    goto(destination);
   }
 
   function onModalCancel() {
