@@ -1,14 +1,13 @@
-import type { DrizzleQueryError } from "drizzle-orm/errors";
-
 import { LocationInsertSchema } from "$lib/schema/location";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
 
-import { insertLocation } from "$lib/server/db/queries/location";
+import { UniqueConstraint } from "$lib/server/errors";
+
+import { InsertLocation } from "$lib/server/services/insert-location";
+
 import { formatValibotIssues } from "$lib/utils/valibot-format-error";
 
 import { json } from "@sveltejs/kit";
-import slugify from "slug";
-
 import * as v from "valibot";
 
 export const POST = AuthenticatedRequestHandler(async ({ request, locals }) => {
@@ -23,20 +22,18 @@ export const POST = AuthenticatedRequestHandler(async ({ request, locals }) => {
   }
 
   const validatedData = result.output;
-  const slug = slugify(validatedData.name);
   const userId = Number(locals.session?.user.id);
 
-  try {
-    const created = await insertLocation(validatedData, slug, userId);
+  const response = await InsertLocation.execute(validatedData, userId);
 
-    return json(created, { status: 201 });
-  } catch (e) {
-    const error = e as DrizzleQueryError;
-
-    if (error.cause?.message === "SQLITE_CONSTRAINT: SQLite error: UNIQUE constraint failed: location.slug") {
-      return json({ message: "Slug must be unique (the location name is used to generate the slug)." }, { status: 409 });
+  if (!response.success) {
+    if (response.value instanceof UniqueConstraint) {
+      return json({ msg: response.value.message }, { status: 409 });
     }
-
-    return json({ message: "An unexpected error occurred while adding the location." }, { status: 500 });
+    else {
+      return json({ msg: response.value.message }, { status: 500 });
+    }
   }
+
+  return json({ location: response.value }, { status: 201 });
 });
