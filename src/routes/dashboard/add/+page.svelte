@@ -87,14 +87,14 @@
     } catch (err: unknown) {
       const error = err as HTTPError;
 
-      const result: { message: string } = await error.response.json();
+      const result: { msg: string } = await error.response.json();
 
       if (error.response.status === 400) {
         for (const [key, value] of Object.entries(result)) {
           setError(form, key as keyof typeof $form, value as string);
         }
       } else {
-        setMessage(form, result.message);
+        setMessage(form, result.msg);
       }
     }
   }

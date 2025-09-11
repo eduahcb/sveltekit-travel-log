@@ -1,6 +1,6 @@
-import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { int, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
-import { createInsertSchema } from "drizzle-valibot";
+import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 
 import * as v from "valibot";
 
@@ -16,7 +16,9 @@ export const location = sqliteTable("location", {
   userId: int().notNull().references(() => user.id),
   createdAt: int().notNull().$default(() => Date.now()),
   updatedAt: int().notNull().$default(() => Date.now()).$onUpdate(() => Date.now()),
-});
+}, t => [
+  unique().on(t.name, t.userId),
+]);
 
 export const LocationInsertSchema = v.omit(createInsertSchema(location, {
   name: v.pipe(
@@ -42,3 +44,5 @@ export const LocationInsertSchema = v.omit(createInsertSchema(location, {
     ),
   ),
 }), ["id", "slug", "userId", "createdAt", "updatedAt"]);
+
+export const LocationSelectSchema = createSelectSchema(location);
