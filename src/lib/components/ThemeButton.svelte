@@ -1,21 +1,14 @@
 <script lang="ts">
+  import { getThemeContext } from "$lib/context/theme";
   import { Moon, Sun } from "@lucide/svelte";
 
-  let isLight = $state(false);
-
-  $effect(() => {
-    const mode = localStorage.getItem("mode") ?? "dark";
-    isLight = mode === "light";
-  });
+  const themeStore = getThemeContext();
 
   function toggleTheme(event: Event) {
     const input = event.target as HTMLInputElement;
 
     const mode = input.checked ? "light" : "dark";
-    document.documentElement.dataset.mode = mode;
-    localStorage.setItem("mode", mode);
-
-    isLight = input.checked;
+    themeStore().theme = mode;
   }
 </script>
 
@@ -23,7 +16,7 @@
   <input
     id="color-mode"
     type="checkbox"
-    checked={isLight}
+    checked={themeStore().theme === "light"}
     onchange={toggleTheme}
   />
   <div class="swap-on">

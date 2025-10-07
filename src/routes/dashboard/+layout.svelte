@@ -1,9 +1,12 @@
 <script lang="ts">
   import type { LayoutProps } from "./$types";
   import { page } from "$app/state";
+
+  import MapApp from "$lib/components/Map.svelte";
   import NavItem from "$lib/components/NavItem.svelte";
 
   import { LogOut, Map, MapPin, Menu, Plus } from "@lucide/svelte";
+
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
   const { children, data }: LayoutProps = $props();
@@ -74,6 +77,8 @@
     <div class="p-1 overflow-y-auto">
       {@render children()}
     </div>
-    <div class="p-1"></div>
+    <div class="p-1">
+      <MapApp />
+    </div>
   </div>
 </main>
