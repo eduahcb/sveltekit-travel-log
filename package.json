@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "concurrently \"pnpm dev:db\"  \"vite dev\"",
     "dev:db": "turso dev --db-file local.db",
+    "db:generate": "drizzle-kit geneerate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
     "build": "vite build",
     "preview": "vite preview",
     "prepare": "husky",
