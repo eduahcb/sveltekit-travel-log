@@ -1,19 +1,21 @@
 <script lang="ts">
+  import type { LayoutProps } from "./$types";
   import { page } from "$app/state";
   import NavItem from "$lib/components/NavItem.svelte";
 
-  import { LogOut, Map, Menu, Plus } from "@lucide/svelte";
+  import { LogOut, Map, MapPin, Menu, Plus } from "@lucide/svelte";
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
-  const { children } = $props();
+  const { children, data }: LayoutProps = $props();
 
   let isExpansed = $state(true);
+  const isDashboard = $derived(page.url.pathname === "/dashboard");
+  const locations = $derived(data.locations);
+  const hasLocations = $derived(locations.length > 0);
 
   function toggleExpanded() {
     isExpansed = !isExpansed;
   }
-
-  const isDashboard = $derived(page.url.pathname === "/dashboard");
 </script>
 
 <main class="flex-1 flex gap-1">
@@ -42,6 +44,16 @@
         <NavItem href="/dashboard/add" label="Add Location">
           <Plus />
         </NavItem>
+
+        {#if hasLocations}
+          <hr class="hr border-white" />
+        {/if}
+
+        {#each locations as location (location.id)}
+          <NavItem href="#" label={location.name}>
+            <MapPin />
+          </NavItem>
+        {/each}
       {/snippet}
 
       {#snippet footer()}

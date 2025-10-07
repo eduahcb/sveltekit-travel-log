@@ -9,7 +9,7 @@
 
 <h1 class="h4 mb-4">Locations</h1>
 
-<div class={[hasLocations && "flex gap-4 w-full"]}>
+<div class={[hasLocations && "flex gap-2 w-full"]}>
   {#each page.data.locations as location (location.id)}
     <LocationCard {location} />
   {:else}
