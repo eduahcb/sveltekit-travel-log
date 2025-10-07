@@ -6,9 +6,12 @@
 
   import { setAuthContext } from "$lib/context/auth";
 
+  import { setThemeContext } from "$lib/context/theme";
   import { createAuthStore } from "$lib/stores/auth.svelte";
-  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
 
+  import { createThemeStore } from "$lib/stores/theme.svelte";
+
+  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import "../app.css";
 
   const queryClient = new QueryClient({
@@ -21,8 +24,10 @@
 
   const { children, data }: LayoutProps = $props();
 
+  const themeStore = createThemeStore();
   const store = createAuthStore(data.session);
 
+  setThemeContext(themeStore);
   setAuthContext(store);
 </script>
 

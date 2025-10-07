@@ -28,6 +28,7 @@
     "lint-staged": "^16.1.2",
     "nanoid": "^5.1.5",
     "slug": "^11.0.0",
+    "svelte-maplibre-gl": "^1.0.1",
     "zod": "^4.0.5"
   },
   "devDependencies": {
