@@ -83,7 +83,9 @@
       await $location.mutateAsync(form.data);
       reset();
 
-      return goto("/dashboard");
+      return goto("/dashboard", {
+        invalidateAll: true,
+      });
     } catch (err: unknown) {
       const error = err as HTTPError;
 
@@ -129,6 +131,7 @@
     <FormField
       label="Latitude"
       type="number"
+      step="any"
       bind:value={$form.lat}
       error={$errors.lat}
       disabled={$location.isPending}
@@ -137,6 +140,7 @@
     <FormField
       label="Longitude"
       type="number"
+      step="any"
       bind:value={$form.long}
       error={$errors.long}
       disabled={$location.isPending}

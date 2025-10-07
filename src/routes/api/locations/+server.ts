@@ -1,6 +1,8 @@
 import { LocationInsertSchema } from "$lib/schema/location";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
 
+import { getLocations } from "$lib/server/db/queries/location";
+
 import { UniqueConstraint } from "$lib/server/errors";
 
 import { InsertLocation } from "$lib/server/services/insert-location";
@@ -9,6 +11,14 @@ import { formatValibotIssues } from "$lib/utils/valibot-format-error";
 
 import { json } from "@sveltejs/kit";
 import * as v from "valibot";
+
+export const GET = AuthenticatedRequestHandler(async ({ locals }) => {
+  const userId = Number(locals.session?.user.id);
+
+  const locations = await getLocations(userId);
+
+  return json({ locations });
+});
 
 export const POST = AuthenticatedRequestHandler(async ({ request, locals }) => {
   const body = await request.json();

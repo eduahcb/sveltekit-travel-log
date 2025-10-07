@@ -6,6 +6,7 @@
     label: string;
     error?: string[];
     disabled?: boolean;
+    step?: string;
   };
 
   let {
@@ -15,6 +16,7 @@
     type = "text",
     name,
     disabled = false,
+    step,
   }: FormFieldProp = $props();
 </script>
 
@@ -35,6 +37,7 @@
       {name}
       {disabled}
       {type}
+      {step}
       class={["input", error && "ring-error-500"]}
       bind:value
       aria-invalid={error ? "true" : "false"}

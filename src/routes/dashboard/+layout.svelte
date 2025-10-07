@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import NavItem from "$lib/components/NavItem.svelte";
 
   import { LogOut, Map, Menu, Plus } from "@lucide/svelte";
@@ -11,6 +12,8 @@
   function toggleExpanded() {
     isExpansed = !isExpansed;
   }
+
+  const isDashboard = $derived(page.url.pathname === "/dashboard");
 </script>
 
 <main class="flex-1 flex gap-1">
@@ -48,10 +51,17 @@
       {/snippet}
     </Navigation.Rail>
   </div>
-  <div class="flex-1 grid grid-cols-[400px_auto]">
-    <div>
+  <div
+    class={[
+      "flex-1 grid",
+      isDashboard
+        ? "grid-cols-1 grid-rows-[30%_70%]"
+        : "grid-cols-[400px_auto]",
+    ]}
+  >
+    <div class="p-1 overflow-y-auto">
       {@render children()}
     </div>
-    <div></div>
+    <div class="p-1"></div>
   </div>
 </main>
