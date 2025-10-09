@@ -1,14 +1,14 @@
+import { browser } from "$app/environment";
+
 type Theme = "light" | "dark";
 
 export function createThemeStore() {
   let theme = $state<Theme>("dark");
 
-  $effect(() => {
+  if (browser) {
     const mode = localStorage.getItem("mode") ?? theme;
-
-    document.documentElement.dataset.mode = mode;
     theme = mode as Theme;
-  });
+  }
 
   return {
     get theme() {

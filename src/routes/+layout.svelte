@@ -5,10 +5,9 @@
   import Navbar from "$lib/components/Navbar.svelte";
 
   import { setAuthContext } from "$lib/context/auth";
-
   import { setThemeContext } from "$lib/context/theme";
-  import { createAuthStore } from "$lib/stores/auth.svelte";
 
+  import { createAuthStore } from "$lib/stores/auth.svelte";
   import { createThemeStore } from "$lib/stores/theme.svelte";
 
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";

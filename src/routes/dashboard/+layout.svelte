@@ -3,22 +3,32 @@
   import { page } from "$app/state";
 
   import MapApp from "$lib/components/Map.svelte";
+
   import NavItem from "$lib/components/NavItem.svelte";
+  import { setLocationContext } from "$lib/context/location";
+  import { setMapContext } from "$lib/context/map";
+
+  import { createMapStore } from "$lib/stores/map.svelte";
 
   import { LogOut, Map, MapPin, Menu, Plus } from "@lucide/svelte";
-
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
   const { children, data }: LayoutProps = $props();
+  setLocationContext(() => data.locations);
 
   let isExpansed = $state(true);
   const isDashboard = $derived(page.url.pathname === "/dashboard");
+
   const locations = $derived(data.locations);
   const hasLocations = $derived(locations.length > 0);
 
   function toggleExpanded() {
     isExpansed = !isExpansed;
   }
+
+  // need location store
+  const mapStore = createMapStore();
+  setMapContext(mapStore);
 </script>
 
 <main class="flex-1 flex gap-1">
