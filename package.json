@@ -26,6 +26,7 @@
     "drizzle-valibot": "^0.4.2",
     "ky": "^1.9.0",
     "lint-staged": "^16.1.2",
+    "maplibre-gl": "^5.8.0",
     "nanoid": "^5.1.5",
     "slug": "^11.0.0",
     "svelte-maplibre-gl": "^1.0.1",
