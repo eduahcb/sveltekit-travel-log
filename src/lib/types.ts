@@ -7,3 +7,8 @@ export type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 export type Location = v.InferInput<typeof LocationSelectSchema>;
 export type LocationInsertData = v.InferInput<typeof LocationInsertSchema>;
+
+export type MapPoint = Location & {
+  to: string;
+  zoom: boolean;
+};

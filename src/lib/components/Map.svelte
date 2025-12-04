@@ -7,7 +7,12 @@
 
   import { MapPin } from "@lucide/svelte";
 
-  import { MapLibre, Marker, NavigationControl } from "svelte-maplibre-gl";
+  import {
+    MapLibre,
+    Marker,
+    NavigationControl,
+    Popup,
+  } from "svelte-maplibre-gl";
 
   const themeStore = getThemeContext();
   const mapStore = getMapContext();
@@ -16,6 +21,10 @@
 
   $effect(() => {
     mapStore.initMap();
+  });
+
+  $effect(() => {
+    mapStore.flyToSelectedPoint();
   });
 </script>
 
@@ -31,10 +40,26 @@
   <NavigationControl />
 
   {#each mapStore.mapPoints() as point (point.id)}
+    {@const isHovered = point.id === mapStore.selectedPoint?.id}
     <Marker lnglat={{ lng: point.long, lat: point.lat }}>
       {#snippet content()}
-        <MapPin size={32} class="fill-tertiary-500" />
+        <MapPin
+          size={32}
+          class={[isHovered ? "fill-primary-500" : "fill-tertiary-500"]}
+          onmouseenter={() => {
+            mapStore.selectedPoint = {
+              ...point,
+              zoom: false,
+            };
+          }}
+        />
       {/snippet}
+
+      <Popup class="text-black" open={isHovered} closeButton={false}>
+        <a href={point.to} class="text-sm anchor">
+          {point.name}
+        </a>
+      </Popup>
     </Marker>
   {/each}
 </MapLibre>

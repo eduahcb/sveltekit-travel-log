@@ -14,21 +14,20 @@
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
   const { children, data }: LayoutProps = $props();
+
   setLocationContext(() => data.locations);
 
   let isExpansed = $state(true);
   const isDashboard = $derived(page.url.pathname === "/dashboard");
 
-  const locations = $derived(data.locations);
-  const hasLocations = $derived(locations.length > 0);
-
   function toggleExpanded() {
     isExpansed = !isExpansed;
   }
-
   // need location store
   const mapStore = createMapStore();
   setMapContext(mapStore);
+
+  const hasPoints = $derived(mapStore.mapPoints().length > 0);
 </script>
 
 <main class="flex-1 flex gap-1">
@@ -58,13 +57,28 @@
           <Plus />
         </NavItem>
 
-        {#if hasLocations}
+        {#if hasPoints}
           <hr class="hr border-white" />
         {/if}
 
-        {#each locations as location (location.id)}
-          <NavItem href="#" label={location.name}>
-            <MapPin />
+        {#each mapStore.mapPoints() as point (point.id)}
+          <NavItem
+            href={point.to}
+            label={point.name}
+            onmousenter={() => {
+              mapStore.selectedPoint = point;
+            }}
+            onmouseleave={() => {
+              mapStore.selectedPoint = undefined;
+            }}
+          >
+            {@const isHovered = mapStore.selectedPoint?.id === point.id}
+            <MapPin
+              class={[
+                "group-hover:fill-primary-500",
+                isHovered && "fill-primary-500",
+              ]}
+            />
           </NavItem>
         {/each}
       {/snippet}
