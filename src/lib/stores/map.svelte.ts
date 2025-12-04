@@ -1,4 +1,4 @@
-import type { Location } from "$lib/types";
+import type { MapPoint } from "$lib/types";
 import type { LngLatLike, Map } from "maplibre-gl";
 
 import { CENTER_BRASIL } from "$lib/constants";
@@ -10,16 +10,29 @@ import maplibregl from "maplibre-gl";
 // eslint-disable-next-line ts/consistent-type-definitions
 type MapStore = {
   map: Map | undefined;
-  mapPoints: () => Location[];
+  mapPoints: () => MapPoint[];
+  selectedPoint: MapPoint | undefined;
   initMap: () => void;
+  flyToSelectedPoint: () => void;
 };
 
 export function createMapStore() {
   const locationStore = getLocationContext();
 
+  const mapPoints = $derived.by<MapPoint[]>(() => {
+    return locationStore().map(location => {
+      return {
+        ...location,
+        to: `/dashboard/location/${location.slug}`,
+        zoom: true,
+      };
+    });
+  });
+
   const mapStore = $state<MapStore>({
     map: undefined,
-    mapPoints: () => locationStore(),
+    mapPoints: () => mapPoints,
+    selectedPoint: undefined,
     initMap: () => {
       const points = mapStore.mapPoints();
 
@@ -40,6 +53,21 @@ export function createMapStore() {
         padding: 80,
         maxZoom: 8,
       });
+    },
+    flyToSelectedPoint: () => {
+      const point = mapStore.selectedPoint;
+
+      if (!point) {
+        mapStore.initMap();
+        return;
+      }
+
+      if (point.zoom) {
+        mapStore.map?.flyTo({
+          center: [point.long, point.lat],
+          zoom: 6,
+        });
+      }
     },
   });
 
