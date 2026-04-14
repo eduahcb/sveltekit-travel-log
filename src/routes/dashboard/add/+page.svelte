@@ -7,6 +7,8 @@
 
   import FormField from "$lib/components/FormField.svelte";
 
+  import { getMapContext } from "$lib/context/map";
+
   import { fetchCreateLocation } from "$lib/http/location";
 
   import { LocationInsertSchema } from "$lib/schema/location";
@@ -17,6 +19,10 @@
 
   import { HTTPError } from "ky";
 
+  import mapLibre from "maplibre-gl";
+
+  import { onMount } from "svelte";
+
   import {
     defaults,
     setError,
@@ -26,14 +32,37 @@
 
   import { valibot } from "sveltekit-superforms/adapters";
 
+  const mapStore = getMapContext();
+
   let open = $state(false);
   let destination = "/dashboard";
+
+  const coordinates = $state({
+    lat: 0,
+    long: 0,
+  });
+
+  onMount(() => {
+    mapStore.showAddMarker = true;
+  });
+
+  onMount(() => {
+    const ll = mapLibre.LngLat.convert(mapStore.addMarker);
+
+    coordinates.long = ll.lng;
+    coordinates.lat = ll.lat;
+  });
+
+  $effect(() => {
+    const ll = mapLibre.LngLat.convert(mapStore.addMarker);
+
+    coordinates.long = ll.lng;
+    coordinates.lat = ll.lat;
+  });
 
   const initialData = {
     name: "",
     description: "",
-    lat: 0,
-    long: 0,
   };
 
   const location = createMutation({
@@ -49,7 +78,7 @@
       resetForm: false,
       onUpdate: async ({ form }) => {
         if (form.valid) {
-          await addLocation(form);
+          await addLocation(form, coordinates.long, coordinates.lat);
         }
       },
     },
@@ -62,6 +91,8 @@
       cancel();
       open = true;
       destination = to?.url.pathname ?? "/dashboard";
+    } else {
+      mapStore.resetAddMarker();
     }
   });
 
@@ -72,15 +103,24 @@
   function onConfirm() {
     reset();
     goto(destination);
+    mapStore.resetAddMarker();
   }
 
   function onModalCancel() {
     open = false;
   }
 
-  async function addLocation(form: SuperValidated<LocationInsertData>) {
+  async function addLocation(
+    form: SuperValidated<LocationInsertData>,
+    long: number,
+    lat: number,
+  ) {
     try {
-      await $location.mutateAsync(form.data);
+      await $location.mutateAsync({
+        ...form.data,
+        long,
+        lat,
+      });
       reset();
 
       return goto("/dashboard", {
@@ -128,23 +168,11 @@
       disabled={$location.isPending}
     />
 
-    <FormField
-      label="Latitude"
-      type="number"
-      step="any"
-      bind:value={$form.lat}
-      error={$errors.lat}
-      disabled={$location.isPending}
-    />
-
-    <FormField
-      label="Longitude"
-      type="number"
-      step="any"
-      bind:value={$form.long}
-      error={$errors.long}
-      disabled={$location.isPending}
-    />
+    <p class="text-xs">
+      Current coordinates: {coordinates.long.toFixed(5)}, {coordinates.lat.toFixed(
+        5,
+      )}
+    </p>
 
     <div class="btn-group w-full flex-col p-2 md:flex-row justify-end">
       <button

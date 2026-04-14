@@ -12,8 +12,11 @@ type MapStore = {
   map: Map | undefined;
   mapPoints: () => MapPoint[];
   selectedPoint: MapPoint | undefined;
+  addMarker: LngLatLike;
+  showAddMarker: boolean;
   initMap: () => void;
-  flyToSelectedPoint: () => void;
+  flyToAddMarker: () => void;
+  resetAddMarker: () => void;
 };
 
 export function createMapStore() {
@@ -33,6 +36,8 @@ export function createMapStore() {
     map: undefined,
     mapPoints: () => mapPoints,
     selectedPoint: undefined,
+    addMarker: CENTER_BRASIL as LngLatLike,
+    showAddMarker: false,
     initMap: () => {
       const points = mapStore.mapPoints();
 
@@ -54,20 +59,17 @@ export function createMapStore() {
         maxZoom: 8,
       });
     },
-    flyToSelectedPoint: () => {
-      const point = mapStore.selectedPoint;
+    flyToAddMarker: () => {
+      mapStore.map?.flyTo({
+        center: mapStore.addMarker,
+        zoom: 6,
+      });
+    },
+    resetAddMarker: () => {
+      mapStore.showAddMarker = false;
+      mapStore.addMarker = CENTER_BRASIL as LngLatLike;
 
-      if (!point) {
-        mapStore.initMap();
-        return;
-      }
-
-      if (point.zoom) {
-        mapStore.map?.flyTo({
-          center: [point.long, point.lat],
-          zoom: 6,
-        });
-      }
+      mapStore.initMap();
     },
   });
 

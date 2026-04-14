@@ -7,6 +7,8 @@
 
   import { MapPin } from "@lucide/svelte";
 
+  import { untrack } from "svelte";
+
   import {
     MapLibre,
     Marker,
@@ -24,7 +26,11 @@
   });
 
   $effect(() => {
-    mapStore.flyToSelectedPoint();
+    if (mapStore.showAddMarker) {
+      untrack(() => {
+        mapStore.flyToAddMarker();
+      });
+    }
   });
 </script>
 
@@ -38,6 +44,14 @@
     : "https://tiles.openfreemap.org/styles/liberty"}
 >
   <NavigationControl />
+
+  {#if mapStore.showAddMarker}
+    <Marker bind:lnglat={mapStore.addMarker} draggable>
+      {#snippet content()}
+        <MapPin class="fill-primary-500" size={32} />
+      {/snippet}
+    </Marker>
+  {/if}
 
   {#each mapStore.mapPoints() as point (point.id)}
     {@const isHovered = point.id === mapStore.selectedPoint?.id}
