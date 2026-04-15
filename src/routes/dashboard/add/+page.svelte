@@ -37,27 +37,17 @@
   let open = $state(false);
   let destination = "/dashboard";
 
-  const coordinates = $state({
-    lat: 0,
-    long: 0,
+  const coordinates = $derived.by(() => {
+    const ll = mapLibre.LngLat.convert(mapStore.addMarker);
+
+    return {
+      long: ll.lng,
+      lat: ll.lat,
+    };
   });
 
   onMount(() => {
     mapStore.showAddMarker = true;
-  });
-
-  onMount(() => {
-    const ll = mapLibre.LngLat.convert(mapStore.addMarker);
-
-    coordinates.long = ll.lng;
-    coordinates.lat = ll.lat;
-  });
-
-  $effect(() => {
-    const ll = mapLibre.LngLat.convert(mapStore.addMarker);
-
-    coordinates.long = ll.lng;
-    coordinates.lat = ll.lat;
   });
 
   const initialData = {

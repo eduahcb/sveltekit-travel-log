@@ -27,7 +27,6 @@ export function createMapStore() {
       return {
         ...location,
         to: `/dashboard/location/${location.slug}`,
-        zoom: true,
       };
     });
   });

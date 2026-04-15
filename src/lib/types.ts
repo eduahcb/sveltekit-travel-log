@@ -10,5 +10,4 @@ export type LocationInsertData = v.InferInput<typeof LocationInsertSchema>;
 
 export type MapPoint = Location & {
   to: string;
-  zoom: boolean;
 };

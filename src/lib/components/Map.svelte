@@ -64,10 +64,7 @@
           size={32}
           class={[isHovered ? "fill-primary-500" : "fill-tertiary-500"]}
           onmouseenter={() => {
-            mapStore.selectedPoint = {
-              ...point,
-              zoom: false,
-            };
+            mapStore.selectedPoint = point;
           }}
         />
       {/snippet}
