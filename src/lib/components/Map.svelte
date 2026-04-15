@@ -26,8 +26,9 @@
   });
 
   $effect(() => {
-    if (!mapStore.map)
+    if (!mapStore.map) {
       return;
+    }
 
     if (mapStore.showAddMarker) {
       untrack(() => {
@@ -53,6 +54,10 @@
       {#snippet content()}
         <MapPin class="fill-primary-500" size={32} />
       {/snippet}
+
+      <Popup class="text-black" open closeButton={false}>
+        <p class="text-sm">Drag to your desired location</p>
+      </Popup>
     </Marker>
   {/if}
 
