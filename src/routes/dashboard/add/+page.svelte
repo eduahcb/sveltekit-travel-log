@@ -100,7 +100,6 @@
   function onConfirm() {
     reset();
     goto(destination);
-    mapStore.resetAddMarker();
   }
 
   function onModalCancel() {
