@@ -63,6 +63,8 @@
   const initialData = {
     name: "",
     description: "",
+    lat: 0,
+    long: 0,
   };
 
   const location = createMutation({
@@ -78,7 +80,10 @@
       resetForm: false,
       onUpdate: async ({ form }) => {
         if (form.valid) {
-          await addLocation(form, coordinates.long, coordinates.lat);
+          form.data.long = coordinates.long;
+          form.data.lat = coordinates.lat;
+
+          await addLocation(form);
         }
       },
     },
@@ -112,14 +117,10 @@
 
   async function addLocation(
     form: SuperValidated<LocationInsertData>,
-    long: number,
-    lat: number,
   ) {
     try {
       await $location.mutateAsync({
         ...form.data,
-        long,
-        lat,
       });
       reset();
 

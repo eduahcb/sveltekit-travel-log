@@ -26,6 +26,9 @@
   });
 
   $effect(() => {
+    if (!mapStore.map)
+      return;
+
     if (mapStore.showAddMarker) {
       untrack(() => {
         mapStore.flyToAddMarker();
