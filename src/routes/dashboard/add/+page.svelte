@@ -7,6 +7,8 @@
 
   import FormField from "$lib/components/FormField.svelte";
 
+  import { getMapContext } from "$lib/context/map";
+
   import { fetchCreateLocation } from "$lib/http/location";
 
   import { LocationInsertSchema } from "$lib/schema/location";
@@ -17,6 +19,10 @@
 
   import { HTTPError } from "ky";
 
+  import mapLibre from "maplibre-gl";
+
+  import { onMount } from "svelte";
+
   import {
     defaults,
     setError,
@@ -26,8 +32,25 @@
 
   import { valibot } from "sveltekit-superforms/adapters";
 
+  const mapStore = getMapContext();
+
   let open = $state(false);
   let destination = "/dashboard";
+
+  const coordinates = $derived.by(() => {
+    const ll = mapLibre.LngLat.convert(mapStore.addMarker);
+
+    return {
+      long: ll.lng,
+      lat: ll.lat,
+    };
+  });
+
+  onMount(() => {
+    mapStore.showAddMarker = true;
+
+    return () => (mapStore.showAddMarker = false);
+  });
 
   const initialData = {
     name: "",
@@ -48,6 +71,9 @@
       SPA: true,
       resetForm: false,
       onUpdate: async ({ form }) => {
+        form.data.long = coordinates.long;
+        form.data.lat = coordinates.lat;
+
         if (form.valid) {
           await addLocation(form);
         }
@@ -62,6 +88,8 @@
       cancel();
       open = true;
       destination = to?.url.pathname ?? "/dashboard";
+    } else {
+      mapStore.resetAddMarker();
     }
   });
 
@@ -80,7 +108,9 @@
 
   async function addLocation(form: SuperValidated<LocationInsertData>) {
     try {
-      await $location.mutateAsync(form.data);
+      await $location.mutateAsync({
+        ...form.data,
+      });
       reset();
 
       return goto("/dashboard", {
@@ -128,23 +158,11 @@
       disabled={$location.isPending}
     />
 
-    <FormField
-      label="Latitude"
-      type="number"
-      step="any"
-      bind:value={$form.lat}
-      error={$errors.lat}
-      disabled={$location.isPending}
-    />
-
-    <FormField
-      label="Longitude"
-      type="number"
-      step="any"
-      bind:value={$form.long}
-      error={$errors.long}
-      disabled={$location.isPending}
-    />
+    <p class="text-xs">
+      Current coordinates: {coordinates.long.toFixed(5)}, {coordinates.lat.toFixed(
+        5,
+      )}
+    </p>
 
     <div class="btn-group w-full flex-col p-2 md:flex-row justify-end">
       <button
