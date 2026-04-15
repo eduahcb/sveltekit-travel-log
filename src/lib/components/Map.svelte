@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LngLatLike } from "maplibre-gl";
+  import type { LngLatLike, MapMouseEvent } from "maplibre-gl";
   import { CENTER_BRASIL, ZOOM_MAP } from "$lib/constants";
 
   import { getMapContext } from "$lib/context/map";
@@ -36,9 +36,16 @@
       });
     }
   });
+
+  const handleMapClick = (e: MapMouseEvent) => {
+    if (mapStore.showAddMarker) {
+      mapStore.addMarker = e.lngLat;
+    }
+  };
 </script>
 
 <MapLibre
+  onclick={handleMapClick}
   bind:map={mapStore.map}
   center={CENTER_BRASIL as LngLatLike}
   zoom={ZOOM_MAP}
