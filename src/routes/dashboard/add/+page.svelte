@@ -48,6 +48,8 @@
 
   onMount(() => {
     mapStore.showAddMarker = true;
+
+    return () => (mapStore.showAddMarker = false);
   });
 
   const initialData = {
@@ -69,10 +71,10 @@
       SPA: true,
       resetForm: false,
       onUpdate: async ({ form }) => {
-        if (form.valid) {
-          form.data.long = coordinates.long;
-          form.data.lat = coordinates.lat;
+        form.data.long = coordinates.long;
+        form.data.lat = coordinates.lat;
 
+        if (form.valid) {
           await addLocation(form);
         }
       },
@@ -105,9 +107,7 @@
     open = false;
   }
 
-  async function addLocation(
-    form: SuperValidated<LocationInsertData>,
-  ) {
+  async function addLocation(form: SuperValidated<LocationInsertData>) {
     try {
       await $location.mutateAsync({
         ...form.data,
