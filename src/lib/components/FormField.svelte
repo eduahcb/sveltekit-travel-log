@@ -28,7 +28,7 @@
       {name}
       {disabled}
       class={["textarea", "resize-none", error && "ring-error-500"]}
-      rows="4"
+      rows="3"
       bind:value
       aria-describedby={error ? `${name}-error` : undefined}
     ></textarea>
