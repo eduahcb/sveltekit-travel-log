@@ -11,3 +11,21 @@ export type LocationInsertData = v.InferInput<typeof LocationInsertSchema>;
 export type MapPoint = Location & {
   to: string;
 };
+
+// eslint-disable-next-line ts/consistent-type-definitions
+export type SearchResult = {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  class: string;
+  type: string;
+  place_rank: number;
+  importance: number;
+  addresstype: string;
+  name: string;
+  display_name: string;
+  boundingbox: string[];
+};

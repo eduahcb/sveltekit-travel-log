@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LocationInsertData } from "$lib/types";
+  import type { LocationInsertData, SearchResult } from "$lib/types";
   import type { SuperValidated } from "sveltekit-superforms";
   import { beforeNavigate, goto } from "$app/navigation";
 
@@ -11,9 +11,11 @@
 
   import { fetchCreateLocation } from "$lib/http/location";
 
+  import { fetchSearchLocations } from "$lib/http/search";
+
   import { LocationInsertSchema } from "$lib/schema/location";
 
-  import { ArrowLeft, LoaderCircle, Plus } from "@lucide/svelte";
+  import { ArrowLeft, LoaderCircle, MapPin, Plus } from "@lucide/svelte";
 
   import { createMutation } from "@tanstack/svelte-query";
 
@@ -29,13 +31,15 @@
     setMessage,
     superForm,
   } from "sveltekit-superforms";
-
   import { valibot } from "sveltekit-superforms/adapters";
 
   const mapStore = getMapContext();
 
+  let searchLocations = $state<SearchResult[]>([]);
+  let isSearching = $state(false);
   let open = $state(false);
   let destination = "/dashboard";
+  let searchForm: HTMLFormElement;
 
   const coordinates = $derived.by(() => {
     const ll = mapLibre.LngLat.convert(mapStore.addMarker);
@@ -59,7 +63,7 @@
     long: 0,
   };
 
-  const location = createMutation({
+  const locationMutation = createMutation({
     mutationKey: ["location"],
     mutationFn: fetchCreateLocation,
   });
@@ -75,7 +79,12 @@
         form.data.lat = coordinates.lat;
 
         if (form.valid) {
-          await addLocation(form);
+          const payload = {
+            ...form.data,
+            lat: coordinates.lat,
+            long: coordinates.long,
+          };
+          await addLocation(form, payload);
         }
       },
     },
@@ -106,10 +115,13 @@
     open = false;
   }
 
-  async function addLocation(form: SuperValidated<LocationInsertData>) {
+  async function addLocation(
+    form: SuperValidated<LocationInsertData>,
+    payload: LocationInsertData,
+  ) {
     try {
-      await $location.mutateAsync({
-        ...form.data,
+      await $locationMutation.mutateAsync({
+        ...payload,
       });
       reset();
 
@@ -130,6 +142,46 @@
       }
     }
   }
+
+  async function searchLocation(
+    event: SubmitEvent & {
+      currentTarget: HTMLFormElement;
+    },
+  ) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const q = formData.get("q") as string;
+
+    if (!q) {
+      return;
+    }
+
+    try {
+      isSearching = true;
+      const result = await fetchSearchLocations(q);
+      searchLocations = result.locations;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      isSearching = false;
+    }
+  }
+
+  function setLocation(location: SearchResult) {
+    mapStore.showAddMarker = false;
+
+    $form.name = location.display_name;
+
+    mapStore.addMarker = {
+      lng: Number(location.lon),
+      lat: Number(location.lat),
+    };
+
+    mapStore.showAddMarker = true;
+
+    searchForm.reset();
+  }
 </script>
 
 <ConfirmModal {open} {onConfirm} onCancel={onModalCancel} />
@@ -137,13 +189,13 @@
 <div class="py-6 px-2">
   <h1 class="h5">Add Location</h1>
 
-  <p class="mt-2 text-sm">
+  <p class="mt-2 text-xs">
     A location is a place you have traveled or will travel to. It can be a city,
     country, state or point of interest. You can add specific times you visited
     this location after adding it.
   </p>
 
-  <form class="my-6 space-y-6" use:enhance>
+  <form class="my-5 space-y-6" use:enhance>
     {#if !!$message}
       <p class="text-error-500">{$message}</p>
     {/if}
@@ -155,14 +207,24 @@
       type="textarea"
       bind:value={$form.description}
       error={$errors.description}
-      disabled={$location.isPending}
+      disabled={$locationMutation.isPending}
     />
 
-    <p class="text-xs">
+    <p class="text-xs mb-2">
       Current coordinates: {coordinates.long.toFixed(5)}, {coordinates.lat.toFixed(
         5,
       )}
     </p>
+
+    <p class="mb-2">To set the coordinates:</p>
+
+    <ul class="list text-sm mb-3">
+      <li class="flex gap-1 items-center">
+        Drag the <MapPin size={18} class="fill-primary-500" /> marker on the map
+      </li>
+      <li>Double click the map</li>
+      <li>Search for a location below</li>
+    </ul>
 
     <div class="btn-group w-full flex-col p-2 md:flex-row justify-end">
       <button
@@ -176,11 +238,11 @@
 
       <button
         type="submit"
-        disabled={$location.isPending}
+        disabled={$locationMutation.isPending}
         class="btn preset-filled-primary-500"
       >
         Add
-        {#if $location.isPending}
+        {#if $locationMutation.isPending}
           <LoaderCircle class="animate-spin" />
         {:else}
           <Plus />
@@ -188,4 +250,49 @@
       </button>
     </div>
   </form>
+  <hr class="hr" />
+
+  <p class="mt-4 text-sm text-right">
+    Search results provider by
+    <a class="anchor" href="https://nominatim.org">nominatin</a>
+  </p>
+
+  <form
+    bind:this={searchForm}
+    onsubmit={searchLocation}
+    class="mt-3 flex items-center justify-center"
+    id="nomatin"
+  >
+    <input
+      name="q"
+      class="input max-w-[200px]"
+      type="search"
+      placeholder="Input"
+    />
+    <button type="submit" class="btn preset-outlined-surface-500">
+      {#if isSearching}
+        <LoaderCircle class="animate-spin" />
+      {/if}
+      Search
+    </button>
+  </form>
+
+  <div class="mt-3 p-1 max-h-60 overflow-auto">
+    {#each searchLocations as location}
+      <div
+        class="flex flex-col gap-2 card mb-2 w-full max-w-md preset-filled-surface-100-900 p-4"
+      >
+        <p class="text-lg text-left">{location.display_name}</p>
+
+        <button
+          onclick={() => setLocation(location)}
+          type="button"
+          class="self-end btn preset-filled-warning-500"
+        >
+          Set location
+          <MapPin />
+        </button>
+      </div>
+    {/each}
+  </div>
 </div>
