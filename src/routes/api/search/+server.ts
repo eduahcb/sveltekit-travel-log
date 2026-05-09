@@ -1,12 +1,12 @@
 import type { SearchResult } from "$lib/types";
+import { NOMINATIN_URL } from "$lib/constants";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
+
 import { formatValibotIssues } from "$lib/utils/valibot-format-error";
 
 import { json } from "@sveltejs/kit";
 
 import * as v from "valibot";
-
-const NOMINATIN_URL = "https://nominatim.openstreetmap.org";
 
 const schema = v.object({
   q: v.pipe(
