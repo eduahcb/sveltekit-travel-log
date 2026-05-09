@@ -1,5 +1,5 @@
 import type { SearchResult } from "$lib/types";
-import { NOMINATIN_URL } from "$lib/constants";
+import { NOMINATIM_URL } from "$lib/constants";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
 
 import { formatValibotIssues } from "$lib/utils/valibot-format-error";
@@ -12,39 +12,35 @@ const schema = v.object({
   q: v.pipe(
     v.string(),
     v.minLength(1),
+    v.maxLength(200),
   ),
 });
 
 export const GET = AuthenticatedRequestHandler(async ({ url, fetch }) => {
   const q = url.searchParams.get("q");
 
-  const result = v.safeParse(schema, {
-    q,
-  });
+  const result = v.safeParse(schema, { q });
 
   if (!result.success) {
-    return json(formatValibotIssues(result.issues), {
-      status: 400,
-    });
+    return json(formatValibotIssues(result.issues), { status: 400 });
   }
 
-  const validResult = result.output;
+  const params = new URLSearchParams({
+    q: result.output.q,
+    format: "json",
+  });
 
-  const response = await fetch(`${NOMINATIN_URL}/search?q=${validResult.q}&format=json`, {
+  const response = await fetch(`${NOMINATIM_URL}/search?${params}`, {
     headers: {
       "User-Agent": "sveltekit-travel-log",
     },
   });
 
   if (!response.ok) {
-    return json({
-      msg: "failed to search for location",
-    });
+    return json({ message: "upstream geocoder request failed" }, { status: 502 });
   }
-  const data = await response.json();
-  const locations = data as SearchResult[];
 
-  return json({
-    locations,
-  });
+  const locations = (await response.json()) as SearchResult[];
+
+  return json({ locations });
 });
