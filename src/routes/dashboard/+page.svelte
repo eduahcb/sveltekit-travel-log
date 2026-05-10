@@ -6,7 +6,7 @@
 
   const mapStore = getMapContext();
 
-  const hasPoints = mapStore.mapPoints().length > 0;
+  const hasPoints = $derived(mapStore.mapPoints().length > 0);
 </script>
 
 <h1 class="h4 mb-4">Locations</h1>

@@ -1,39 +1,56 @@
 <script lang="ts">
+  import type { Location, SidebarItem } from "$lib/types";
   import type { LayoutProps } from "./$types";
+
   import { page } from "$app/state";
 
   import MapApp from "$lib/components/Map.svelte";
-
   import NavItem from "$lib/components/NavItem.svelte";
-  import { setLocationContext } from "$lib/context/location";
+
+  import { SIDE_BY_SIDE_ROUTES } from "$lib/constants";
   import { setMapContext } from "$lib/context/map";
 
   import { createMapStore } from "$lib/stores/map.svelte";
-
+  import { createMapPointFromLocation } from "$lib/utils/map";
   import { LogOut, Map, MapPin, Menu, Plus } from "@lucide/svelte";
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
-  const { children, data }: LayoutProps = $props();
+  const { children }: LayoutProps = $props();
 
-  setLocationContext(() => data.locations);
-
-  let isExpansed = $state(true);
-  const isDashboard = $derived(page.url.pathname === "/dashboard");
+  let isExpanded = $state(true);
+  const isSideBySide = $derived(SIDE_BY_SIDE_ROUTES.has(page.route.id ?? ""));
+  const locations = $derived<Location[] | undefined>(page.data.locations);
 
   function toggleExpanded() {
-    isExpansed = !isExpansed;
+    isExpanded = !isExpanded;
   }
-  // need location store
-  const mapStore = createMapStore();
-  setMapContext(mapStore);
 
-  const hasPoints = $derived(mapStore.mapPoints().length > 0);
+  const sidebarItems = $derived.by<SidebarItem[]>(() => {
+    if (page.route.id === "/dashboard") {
+      return (
+        locations?.map((location) => {
+          return {
+            id: `location-${location.id}`,
+            mapPoint: createMapPointFromLocation(
+              location,
+              `/dashboard/location/${location.slug}`,
+            ),
+          };
+        }) ?? []
+      );
+    }
+
+    return [];
+  });
+
+  const mapStore = createMapStore(() => sidebarItems);
+  setMapContext(mapStore);
 </script>
 
 <main class="flex-1 flex gap-1">
   <div>
     <Navigation.Rail
-      expanded={isExpansed}
+      expanded={isExpanded}
       base="flex flex-col gap-5"
       tilesBase="flex flex-col border-b-1 pb-2"
       tilesGap="gap-3"
@@ -57,22 +74,22 @@
           <Plus />
         </NavItem>
 
-        {#if hasPoints}
+        {#if sidebarItems.length > 0}
           <hr class="hr border-white" />
         {/if}
 
-        {#each mapStore.mapPoints() as point (point.id)}
+        {#each sidebarItems as item (item.id)}
           <NavItem
-            href={point.to}
-            label={point.name}
-            onmousenter={() => {
-              mapStore.selectedPoint = point;
+            href={item.mapPoint.to}
+            label={item.mapPoint.name}
+            onmouseenter={() => {
+              mapStore.selectedPoint = item.mapPoint;
             }}
             onmouseleave={() => {
               mapStore.selectedPoint = undefined;
             }}
           >
-            {@const isHovered = mapStore.selectedPoint?.id === point.id}
+            {@const isHovered = mapStore.selectedPoint?.id === item.mapPoint.id}
             <MapPin
               class={[
                 "group-hover:fill-primary-500",
@@ -93,9 +110,9 @@
   <div
     class={[
       "flex-1 grid",
-      isDashboard
-        ? "grid-cols-1 grid-rows-[30%_70%]"
-        : "grid-cols-[400px_auto]",
+      isSideBySide
+        ? "grid-cols-[400px_auto]"
+        : "grid-cols-1 grid-rows-[30%_70%]",
     ]}
   >
     <div class="p-1 overflow-y-auto">
