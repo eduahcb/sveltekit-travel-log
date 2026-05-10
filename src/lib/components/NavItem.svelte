@@ -6,18 +6,18 @@
     label: string;
     href: string;
     children: Snippet;
-    onmousenter?: () => void;
+    onmouseenter?: () => void;
     onmouseleave?: () => void;
   };
 
   // eslint-disable-next-line style/operator-linebreak
-  const { href, children, label, onmousenter, onmouseleave }: NavItemProps =
+  const { href, children, label, onmouseenter, onmouseleave }: NavItemProps =
     $props();
 </script>
 
 <div
   role="none"
-  onmouseenter={() => onmousenter?.()}
+  onmouseenter={() => onmouseenter?.()}
   onmouseleave={() => onmouseleave?.()}
   class="w-full"
 >

@@ -12,6 +12,11 @@ export type MapPoint = Location & {
   to: string;
 };
 
+export interface SidebarItem {
+  id: string;
+  mapPoint: MapPoint;
+}
+
 // eslint-disable-next-line ts/consistent-type-definitions
 export type SearchResult = {
   place_id: number;

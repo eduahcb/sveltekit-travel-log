@@ -1,10 +1,7 @@
-import type { MapPoint } from "$lib/types";
+import type { MapPoint, SidebarItem } from "$lib/types";
 import type { LngLatLike, Map } from "maplibre-gl";
 
 import { CENTER_BRASIL } from "$lib/constants";
-
-import { getLocationContext } from "$lib/context/location";
-
 import maplibregl from "maplibre-gl";
 
 // eslint-disable-next-line ts/consistent-type-definitions
@@ -19,18 +16,10 @@ type MapStore = {
   resetAddMarker: () => void;
 };
 
-export function createMapStore() {
-  const locationStore = getLocationContext();
-
-  const mapPoints = $derived.by<MapPoint[]>(() => {
-    return locationStore().map(location => {
-      return {
-        ...location,
-        to: `/dashboard/location/${location.slug}`,
-      };
-    });
+export function createMapStore(store: () => SidebarItem[]) {
+  const mapPoints = $derived.by(() => {
+    return store().map(item => item.mapPoint);
   });
-
   const mapStore = $state<MapStore>({
     map: undefined,
     mapPoints: () => mapPoints,
