@@ -18,11 +18,14 @@
 
   const themeStore = getThemeContext();
   const mapStore = getMapContext();
+  let mapIsLoaded = $state(false);
 
   const theme = $derived(themeStore().theme);
 
   $effect(() => {
-    mapStore.initMap();
+    if (mapIsLoaded) {
+      mapStore.initMap();
+    }
   });
 
   $effect(() => {
@@ -45,6 +48,9 @@
 </script>
 
 <MapLibre
+  onload={() => {
+    mapIsLoaded = true;
+  }}
   onclick={handleMapClick}
   bind:map={mapStore.map}
   center={CENTER_BRASIL as LngLatLike}
@@ -74,9 +80,12 @@
       {#snippet content()}
         <MapPin
           size={32}
-          class={[isHovered ? "fill-primary-500" : "fill-tertiary-500"]}
+          class={isHovered ? "fill-primary-500" : "fill-tertiary-500"}
           onmouseenter={() => {
             mapStore.selectedPoint = point;
+          }}
+          onmouseleave={() => {
+            mapStore.selectedPoint = null;
           }}
         />
       {/snippet}
