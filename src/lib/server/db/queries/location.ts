@@ -3,7 +3,7 @@ import type { LocationInsertData } from "$lib/types";
 import { location } from "$lib/schema";
 
 import db from "$lib/server/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function getLocations(userId: number) {
   return await db.query.location.findMany({
@@ -19,4 +19,13 @@ export async function insertLocation(data: LocationInsertData, slug: string, use
   }).returning();
 
   return result[0];
+}
+
+export async function findLocation(userId: number, slug: string) {
+  return await db.query.location.findFirst({
+    where: and(
+      eq(location.userId, userId),
+      eq(location.slug, slug),
+    ),
+  });
 }
