@@ -1,8 +1,8 @@
 import type { Location } from "$lib/types";
 
-import type { LayoutServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: LayoutServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch }) => {
   const response = await fetch("/api/locations");
 
   if (!response.ok) {
