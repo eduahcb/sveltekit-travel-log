@@ -1,22 +1,27 @@
-<script lang="ts">
+<script lang="ts" generics="T">
+  import type { DeepValue } from "@tanstack/svelte-form";
+  import type { FormEventHandler } from "svelte/elements";
+
   type FormFieldProp = {
-    value: string | number | undefined;
+    value: DeepValue<T, string> | string | string[] | number | null | undefined;
     type?: string;
     name?: string;
     label: string;
-    error?: string[];
+    errors: string;
     disabled?: boolean;
     step?: string;
+    oninput: FormEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   };
 
-  let {
+  const {
     label,
-    error,
-    value = $bindable(),
+    errors,
+    value,
     type = "text",
     name,
     disabled = false,
     step,
+    oninput,
   }: FormFieldProp = $props();
 </script>
 
@@ -27,10 +32,11 @@
     <textarea
       {name}
       {disabled}
-      class={["textarea", "resize-none", error && "ring-error-500"]}
+      {oninput}
+      class={["textarea", "resize-none", errors && "ring-error-500"]}
       rows="3"
-      bind:value
-      aria-describedby={error ? `${name}-error` : undefined}
+      value={value as string}
+      aria-describedby={errors ? `${name}-error` : undefined}
     ></textarea>
   {:else}
     <input
@@ -38,14 +44,17 @@
       {disabled}
       {type}
       {step}
-      class={["input", error && "ring-error-500"]}
-      bind:value
-      aria-invalid={error ? "true" : "false"}
-      aria-describedby={error ? `${name}-error` : undefined}
+      {value}
+      {oninput}
+      class={["input", errors && "ring-error-500"]}
+      aria-invalid={errors ? "true" : "false"}
+      aria-describedby={errors ? `${name}-error` : undefined}
     />
   {/if}
 
-  {#if error}
-    <span id={`${name}-error`} class="text-xs text-error-500">{error}</span>
+  {#if errors}
+    <span id={`${name}-error`} class="text-xs text-error-500">
+      {errors}
+    </span>
   {/if}
 </label>

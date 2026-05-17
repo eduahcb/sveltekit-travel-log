@@ -30,7 +30,7 @@
     <button
       type="button"
       class="btn preset-outlined-error-500"
-      onclick={onCancel}>Cancelar</button
+      onclick={onCancel}>Cancel</button
     >
 
     <button
