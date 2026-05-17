@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
+  import { goto } from "$app/navigation";
   import {
     EllipsisVertical,
     MapPinPlus,
@@ -12,6 +13,10 @@
 
   let open = $state(false);
   let buttonEl = $state<HTMLButtonElement>();
+
+  function gotoLocationEdit() {
+    goto(`/dashboard/location/${data.location.slug}/edit`);
+  }
 </script>
 
 <div class="flex gap-2 items-center">
@@ -46,7 +51,11 @@
         class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-1 pl-2 pr-1.5 text-sm font-medium focus-visible:outline-none"
       >
         <div class="w-full">
-          <button type="button" class="w-full btn preset-tonal-surface">
+          <button
+            onclick={gotoLocationEdit}
+            type="button"
+            class="w-full btn preset-tonal-surface"
+          >
             <PenLine size={16} />
             Edit
           </button>

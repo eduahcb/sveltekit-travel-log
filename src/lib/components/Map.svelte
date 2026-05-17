@@ -85,7 +85,7 @@
             mapStore.selectedPoint = point;
           }}
           onmouseleave={() => {
-            mapStore.selectedPoint = null;
+            mapStore.selectedPoint = undefined;
           }}
         />
       {/snippet}
