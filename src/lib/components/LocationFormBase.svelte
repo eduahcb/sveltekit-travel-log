@@ -75,13 +75,17 @@
 
           const result: { msg: string } = await err.response.json();
 
-          if (err.response.status === 400) {
-            return {
-              form: "Invalid data",
-              fields: result,
-            };
-          } else {
-            console.error("Unknown error");
+          switch (err.response.status) {
+            case 400:
+              return {
+                form: "Invalid data",
+                fields: result,
+              };
+            case 404:
+            case 409:
+              return result.msg;
+            default:
+              return "Unknown error";
           }
         }
       },
@@ -89,6 +93,7 @@
   }));
 
   const isDirty = form.useStore((state) => !state.isDefaultValue);
+  const error = form.useStore((state) => state.errorMap.onSubmit);
 
   function handleOnSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -169,16 +174,21 @@
       if (to?.url.pathname) {
         destination = to?.url.pathname;
       }
-    } else {
       return;
     }
-    mapStore.resetAddMarker();
+    if (isDiffPage) {
+      mapStore.resetAddMarker();
+    }
   });
 </script>
 
 <ConfirmModal open={confirmModal.open} {onConfirm} onCancel={onModalCancel} />
 
 <form class="my-5 space-y-6" onsubmit={handleOnSubmit}>
+  {#if error.current && typeof error.current === "string"}
+    <p class="text-error-500">{error.current}</p>
+  {/if}
+
   {@render fields(form)}
   <p class="text-xs mb-2">
     Current coordinates: {coordinates.lat.toFixed(5)}, {coordinates.long.toFixed(
@@ -190,7 +200,7 @@
 
   <ul class="list text-sm mb-3">
     <li class="flex gap-1 items-center">
-      Drag the <MapPin size={18} class="fill-primary-500" /> marker on the map
+      Drag the <MapPin size={18} class="fill-warning-500" /> marker on the map
     </li>
     <li>Double click the map</li>
     <li>Search for a location below</li>
@@ -227,7 +237,7 @@
   bind:this={searchForm}
   onsubmit={handleSearchLocation}
   class="mt-3 flex items-center justify-center"
-  id="nomatin"
+  id="nominatim"
 >
   <input
     name="q"
@@ -244,8 +254,8 @@
 </form>
 
 <p class="mt-4 text-sm text-right">
-  Search results provider by
-  <a class="anchor" href="https://nominatim.org">nominatin</a>
+  Search results provided by
+  <a class="anchor" href="https://nominatim.org">nominatim</a>
 </p>
 
 <div class="mt-3 p-1 max-h-60 overflow-auto">

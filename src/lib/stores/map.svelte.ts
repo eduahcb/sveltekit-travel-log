@@ -1,4 +1,4 @@
-import type { MapPoint, SidebarItem } from "$lib/types";
+import type { MapPoint } from "$lib/types";
 import type { LngLatLike, Map } from "maplibre-gl";
 
 import { CENTER_BRASIL } from "$lib/constants";
@@ -16,13 +16,10 @@ type MapStore = {
   resetAddMarker: () => void;
 };
 
-export function createMapStore(store: () => SidebarItem[]) {
-  const mapPoints = $derived.by(() => {
-    return store().map(item => item.mapPoint);
-  });
+export function createMapStore(store: () => MapPoint[]) {
   const mapStore = $state<MapStore>({
     map: undefined,
-    mapPoints: () => mapPoints,
+    mapPoints: () => store(),
     selectedPoint: undefined,
     addMarker: CENTER_BRASIL as LngLatLike,
     showAddMarker: false,
@@ -50,7 +47,8 @@ export function createMapStore(store: () => SidebarItem[]) {
     flyToAddMarker: () => {
       mapStore.map?.flyTo({
         center: mapStore.addMarker,
-        zoom: 6,
+        zoom: 12,
+        minZoom: 3,
       });
     },
     resetAddMarker: () => {
