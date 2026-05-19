@@ -65,7 +65,7 @@
   {#if mapStore.showAddMarker}
     <Marker bind:lnglat={mapStore.addMarker} draggable>
       {#snippet content()}
-        <MapPin class="fill-primary-500" size={32} />
+        <MapPin class="fill-warning-500" size={32} />
       {/snippet}
 
       <Popup class="text-black" open closeButton={false}>

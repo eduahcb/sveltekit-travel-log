@@ -4,23 +4,13 @@ import type { Location, LocationInsertData } from "$lib/types";
 import type { DrizzleQueryError } from "drizzle-orm/errors";
 
 import { insertLocation } from "$lib/server/db/queries/location";
-
 import { InternalServerError, UniqueConstraint } from "$lib/server/errors";
+
 import { generateUniqueSlug } from "$lib/server/utils/slug";
-
 import slugify from "slug";
+import { isNameConstraintError, isSlugConstraintError } from "../utils/constraints";
 
-const NAME_CONSTRAINT_MESSAGE = "SQLITE_CONSTRAINT: SQLite error: UNIQUE constraint failed: location.name, location.user_id";
-const SLUG_CONSTRAINT_MESSAGE = "SQLITE_CONSTRAINT: SQLite error: UNIQUE constraint failed: location.slug";
 const MAX_ATTEMPTS = 3;
-
-function isNameConstraintError(error: DrizzleQueryError) {
-  return error.cause?.message === NAME_CONSTRAINT_MESSAGE;
-}
-
-function isSlugConstraintError(error: DrizzleQueryError) {
-  return error.cause?.message === SLUG_CONSTRAINT_MESSAGE;
-}
 
 export class InsertLocation {
   static async execute(data: LocationInsertData, userId: number): Promise<Response<Location, Error>> {
@@ -47,6 +37,6 @@ export class InsertLocation {
         }
       }
     }
-    return { success: false, value: new InternalServerError("Internal server error: \"Failed to create location. Please try again") };
+    return { success: false, value: new InternalServerError("Failed to create location. Please try again.") };
   }
 }

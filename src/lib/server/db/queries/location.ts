@@ -29,3 +29,18 @@ export async function findLocation(userId: number, slug: string) {
     ),
   });
 }
+
+export async function updateLocation(userId: number, slug: string, data: LocationInsertData) {
+  const [updatedLocation] = await db.update(location)
+    .set(data)
+    .where(
+      and(
+        eq(location.userId, userId),
+        eq(location.slug, slug),
+      ),
+
+    )
+    .returning();
+
+  return updatedLocation;
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Location, SidebarItem } from "$lib/types";
+  import type { Location, MapPoint, SidebarItem } from "$lib/types";
   import type { LayoutProps } from "./$types";
 
   import { page } from "$app/state";
@@ -41,24 +41,31 @@
   }
 
   const sidebarItems = $derived.by<SidebarItem[]>(() => {
-    if (page.route.id === "/dashboard") {
-      return (
-        locations?.map((location) => {
-          return {
-            id: `location-${location.id}`,
-            mapPoint: createMapPointFromLocation(
-              location,
-              `/dashboard/location/${location.slug}`,
-            ),
-          };
-        }) ?? []
-      );
+    if (navGroup !== "dashboard" || !locations) {
+      return [];
     }
 
+    return locations.map((l) => ({
+      id: `item-${l.slug}`,
+      mapPoint: createMapPointFromLocation(l, `/dashboard/location/${l.slug}`),
+    }));
+  });
+
+  const mapPoints = $derived.by<MapPoint[]>(() => {
+    if (navGroup === "dashboard")
+      return sidebarItems.map((item) => item.mapPoint);
+    if (navGroup === "location" && location) {
+      return [
+        createMapPointFromLocation(
+          location,
+          `/dashboard/location/${location.slug}`,
+        ),
+      ];
+    }
     return [];
   });
 
-  const mapStore = createMapStore(() => sidebarItems);
+  const mapStore = createMapStore(() => mapPoints);
   setMapContext(mapStore);
 </script>
 
