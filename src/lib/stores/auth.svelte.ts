@@ -11,11 +11,15 @@ export function createAuthStore(session: Session) {
   const signIn = async () => {
     loading = true;
 
-    await authClient.signIn.social({
-      provider: "github",
-      callbackURL: "/dashboard",
-      errorCallbackURL: "/error",
-    });
+    try {
+      await authClient.signIn.social({
+        provider: "github",
+        callbackURL: "/dashboard",
+        errorCallbackURL: "/error",
+      });
+    } catch (error: any) {
+      console.error(error.message);
+    }
 
     loading = false;
   };
