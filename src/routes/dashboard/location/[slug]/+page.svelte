@@ -6,7 +6,6 @@
 
   import {
     EllipsisVertical,
-    LoaderCircle,
     MapPinPlus,
     PenLine,
     Trash2,
@@ -58,6 +57,8 @@
 
 <DeleteLocationModal
   open={openDeleteModal}
+  isPending={$deleteMutation.isPending}
+  name={data.location.name}
   onCancel={() => (openDeleteModal = false)}
   onConfirm={deleteLocation}
 />
@@ -89,11 +90,7 @@
             type="button"
             class="w-full btn preset-tonal-surface"
           >
-            {#if $deleteMutation.isPending}
-              <LoaderCircle class="animate-spin" />
-            {:else}
-              <Trash2 size={16} />
-            {/if}
+            <Trash2 size={16} />
             Delete
           </button>
         </div>
