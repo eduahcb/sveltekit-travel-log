@@ -44,3 +44,14 @@ export async function updateLocation(userId: number, slug: string, data: Locatio
 
   return updatedLocation;
 }
+
+export async function deleteLocation(userId: number, slug: string) {
+  const [deletedLocation] = await db.delete(location)
+    .where(and(
+      eq(location.userId, userId),
+      eq(location.slug, slug),
+    ))
+    .returning();
+
+  return deletedLocation;
+}

@@ -17,6 +17,10 @@
     defaultOptions: {
       queries: {
         enabled: browser,
+        retry: false,
+      },
+      mutations: {
+        retry: false,
       },
     },
   });
