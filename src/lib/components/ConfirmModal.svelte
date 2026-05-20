@@ -10,12 +10,12 @@
   let dialog: HTMLDialogElement;
 
   $effect(() => {
+    if (!dialog) {
+      return;
+    }
+
     open ? dialog.showModal() : dialog.close();
   });
-
-  function confirm() {
-    onConfirm?.();
-  }
 </script>
 
 <dialog
@@ -36,7 +36,7 @@
     <button
       type="button"
       class="btn preset-filled-primary-500"
-      onclick={confirm}>Confirm</button
+      onclick={onConfirm}>Confirm</button
     >
   </form>
 </dialog>
