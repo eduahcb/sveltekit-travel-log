@@ -1,11 +1,11 @@
 import type { SearchResult } from "$lib/types";
-import ky from "ky";
+import { api } from "$lib/http/client";
 
 interface Response {
   locations: SearchResult[];
 }
 export async function fetchSearchLocations(search: string): Promise<Response> {
-  return await ky.get("/api/search?q", {
+  return await api.get("/api/search", {
     searchParams: {
       q: search,
     },

@@ -2,7 +2,7 @@ import type { DrizzleQueryError } from "drizzle-orm/errors";
 import type { RequestHandler } from "./$types";
 import { LocationInsertSchema } from "$lib/schema";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
-import { findLocation, updateLocation } from "$lib/server/db/queries/location";
+import { deleteLocation, findLocation, updateLocation } from "$lib/server/db/queries/location";
 import { isNameConstraintError } from "$lib/server/utils/constraints";
 import { formatValibotIssues } from "$lib/utils/valibot-format-error";
 import { json } from "@sveltejs/kit";
@@ -70,6 +70,28 @@ export const PUT: RequestHandler = AuthenticatedRequestHandler(async ({ params, 
     }
 
     return json({
+      msg: "Internal server error",
+    }, { status: 500 });
+  }
+});
+
+export const DELETE: RequestHandler = AuthenticatedRequestHandler(async ({ params, locals }) => {
+  const userId = Number(locals.session?.user.id);
+  const { slug } = params;
+
+  try {
+    const location = await deleteLocation(userId, slug);
+
+    if (!location) {
+      return json({
+        msg: "Location not found",
+      }, { status: 404 });
+    }
+
+    return new Response(null, { status: 204 });
+  } catch {
+    return json({
+
       msg: "Internal server error",
     }, { status: 500 });
   }
