@@ -4,6 +4,9 @@ import { drizzle } from "drizzle-orm/libsql";
 
 import * as schema from "../../schema";
 
+console.error("[db] TURSO_DATABASE_URL:", env.TURSO_DATABASE_URL);
+console.error("[db] TURSO_AUTH_TOKEN prefix:", env.TURSO_AUTH_TOKEN?.slice(0, 20));
+
 const db = drizzle({
   connection: {
     url: env.TURSO_DATABASE_URL,
