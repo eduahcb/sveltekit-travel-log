@@ -1,4 +1,5 @@
-import { NODE_ENV, TURSO_AUTH_TOKEN, TURSO_DATABASE_URL } from "$env/static/private";
+import { TURSO_AUTH_TOKEN, TURSO_DATABASE_URL } from "$env/dynamic/private";
+import { NODE_ENV } from "$env/static/private";
 import { drizzle } from "drizzle-orm/libsql";
 
 import * as schema from "../../schema";
