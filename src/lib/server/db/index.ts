@@ -6,6 +6,8 @@ import * as schema from "../../schema";
 
 console.error("[db] TURSO_DATABASE_URL:", env.TURSO_DATABASE_URL);
 console.error("[db] TURSO_AUTH_TOKEN prefix:", env.TURSO_AUTH_TOKEN?.slice(0, 20));
+console.error("[db] TURSO_AUTH_TOKEN length:", env.TURSO_AUTH_TOKEN?.length);
+console.error("[db] TURSO_AUTH_TOKEN trimmed length:", env.TURSO_AUTH_TOKEN?.trim().length);
 
 const db = drizzle({
   connection: {
