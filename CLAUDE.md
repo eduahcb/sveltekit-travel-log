@@ -76,6 +76,10 @@ Migrations are generated and applied with `drizzle-kit` and stored in `src/lib/s
 
 - `GET /api/locations` — fetch the authenticated user's locations
 - `POST /api/locations` — create a location; handled by the `InsertLocation` service class which slugifies the name and retries on slug collisions (up to 3 attempts)
+- `GET /api/locations/[slug]` — fetch a single location by slug
+- `PUT /api/locations/[slug]` — update a location
+- `DELETE /api/locations/[slug]` — delete a location
+- `POST /api/locations/[slug]/logs` — create a location log entry
 - `GET /api/search?q=...` — proxy to Nominatim (OpenStreetMap geocoder) for location search
 
 ### State management pattern
@@ -97,7 +101,8 @@ Server service functions return `Response<T, E>` (defined in `src/lib/server/uti
 /                        — landing / sign-in
 /dashboard               — location list + map
 /dashboard/add           — add location form with draggable marker and Nominatim search
-/dashboard/location/[slug] — location detail (stub)
+/dashboard/location/[slug] — location detail
+/dashboard/location/[slug]/add — add location log form
 /sign-out                — triggers signOut
 /error                   — auth error redirect target
 /api/locations           — REST endpoint
