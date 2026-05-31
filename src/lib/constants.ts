@@ -5,4 +5,5 @@ export const NOMINATIM_URL = "https://nominatim.openstreetmap.org";
 export const SIDE_BY_SIDE_ROUTES = new Set([
   "/dashboard/add",
   "/dashboard/location/[slug]/edit",
+  "/dashboard/location/[slug]/add",
 ]);

@@ -42,6 +42,10 @@
     goto(`/dashboard/location/${data.location.slug}/edit`);
   }
 
+  function gotoAddLocationLog() {
+    goto(`/dashboard/location/${data.location.slug}/add`);
+  }
+
   async function deleteLocation() {
     try {
       await $deleteMutation.mutateAsync(data.location.slug);
@@ -120,7 +124,11 @@
 {/if}
 <p class="mt-5">Add a location log to get started.</p>
 
-<button type="button" class="btn mt-2 preset-filled-primary-500">
+<button
+  type="button"
+  onclick={gotoAddLocationLog}
+  class="btn mt-2 preset-filled-primary-500"
+>
   Add Location Log
   <MapPinPlus size={16} />
 </button>
