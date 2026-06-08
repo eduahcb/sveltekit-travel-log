@@ -1,5 +1,10 @@
 <script lang="ts">
-  import type { Location, MapPoint, SidebarItem } from "$lib/types";
+  import type {
+    Location,
+    LocationWithLogs,
+    MapPoint,
+    SidebarItem,
+  } from "$lib/types";
   import type { LayoutProps } from "./$types";
 
   import { page } from "$app/state";
@@ -22,7 +27,7 @@
   let isExpanded = $state(true);
   const isSideBySide = $derived(SIDE_BY_SIDE_ROUTES.has(page.route.id ?? ""));
   const locations = $derived<Location[] | undefined>(page.data.locations);
-  const location = $derived<Location | undefined>(page.data.location);
+  const location = $derived<LocationWithLogs | undefined>(page.data.location);
 
   const navGroup = $derived.by(() => {
     const id = page.route.id ?? "";
@@ -41,26 +46,42 @@
   }
 
   const sidebarItems = $derived.by<SidebarItem[]>(() => {
-    if (navGroup !== "dashboard" || !locations) {
-      return [];
+    if (navGroup === "location" && location) {
+      return location.locationLogs.map((l) => ({
+        id: `item-${l.id}`,
+        mapPoint: createMapPointFromLocation(
+          l,
+          `/dashboard/location/${location.slug}/${l.id}`,
+        ),
+      }));
     }
 
-    return locations.map((l) => ({
-      id: `item-${l.slug}`,
-      mapPoint: createMapPointFromLocation(l, `/dashboard/location/${l.slug}`),
-    }));
+    if (navGroup === "dashboard" && locations && locations.length > 0) {
+      return locations.map((l) => ({
+        id: `item-${l.slug}`,
+        mapPoint: createMapPointFromLocation(
+          l,
+          `/dashboard/location/${l.slug}`,
+        ),
+      }));
+    }
+
+    return [];
   });
 
   const mapPoints = $derived.by<MapPoint[]>(() => {
     if (navGroup === "dashboard")
       return sidebarItems.map((item) => item.mapPoint);
+
     if (navGroup === "location" && location) {
-      return [
-        createMapPointFromLocation(
-          location,
-          `/dashboard/location/${location.slug}`,
-        ),
-      ];
+      const locationMapPoint = createMapPointFromLocation(
+        location,
+        `/dashboard/location/${location.slug}`,
+      );
+
+      return location.locationLogs.length > 0
+        ? sidebarItems.map((item) => item.mapPoint)
+        : [locationMapPoint];
     }
     return [];
   });
@@ -91,7 +112,7 @@
         {#if navGroup === "dashboard"}
           <DashboardNavItems {sidebarItems} />
         {:else if navGroup === "location"}
-          <LocationNavItems {location} />
+          <LocationNavItems {location} {sidebarItems} />
         {/if}
       {/snippet}
 

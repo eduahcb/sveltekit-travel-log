@@ -1,6 +1,6 @@
-import type { Location, MapPoint } from "$lib/types";
+import type { Location, LocationLog, MapPoint } from "$lib/types";
 
-export function createMapPointFromLocation(location: Location, to: string): MapPoint {
+export function createMapPointFromLocation(location: Location | LocationLog, to: string): MapPoint {
   return {
     ...location,
     to,

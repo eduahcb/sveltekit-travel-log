@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { createInsertSchema } from "drizzle-valibot";
+import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
 import * as v from "valibot";
 import { user } from "./auth";
 import { location } from "./location";
@@ -76,3 +76,5 @@ export const LocationLogSchema = v.pipe(
     ["endedAt"],
   ),
 );
+
+export const LocationLogSelectSchema = createSelectSchema(locationLog);

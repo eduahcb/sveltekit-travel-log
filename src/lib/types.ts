@@ -1,5 +1,5 @@
 import type { LocationInsertSchema, LocationSelectSchema } from "$lib/schema/location";
-import type { LocationLogSchema } from "$lib/schema/location-log";
+import type { LocationLogSchema, LocationLogSelectSchema } from "$lib/schema/location-log";
 import type { auth } from "$lib/server/auth";
 
 import type * as v from "valibot";
@@ -7,10 +7,16 @@ import type * as v from "valibot";
 export type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 export type Location = v.InferInput<typeof LocationSelectSchema>;
+export type LocationLog = v.InferInput<typeof LocationLogSelectSchema>;
+
+export type LocationWithLogs = Location & {
+  locationLogs: LocationLog[];
+};
+
 export type LocationInsertData = v.InferInput<typeof LocationInsertSchema>;
 export type LocationLogInsertData = v.InferInput<typeof LocationLogSchema>;
 
-export type MapPoint = Location & {
+export type MapPoint = (Location | LocationLog) & {
   to: string;
 };
 
