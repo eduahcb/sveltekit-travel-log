@@ -2,8 +2,10 @@
   import type { PageProps } from "./$types";
   import { goto } from "$app/navigation";
   import DeleteLocationModal from "$lib/components/DeleteLocationModal.svelte";
-  import { fetchDeleteLocation } from "$lib/http/location";
 
+  import LocationCard from "$lib/components/LocationCard.svelte";
+  import { getMapContext } from "$lib/context/map";
+  import { fetchDeleteLocation } from "$lib/http/location";
   import {
     EllipsisVertical,
     MapPinPlus,
@@ -15,6 +17,8 @@
   import { HTTPError } from "ky";
 
   const { data }: PageProps = $props();
+
+  const mapStore = getMapContext();
 
   let open = $state(false);
   let openDeleteModal = $state(false);
@@ -117,18 +121,24 @@
   </DropdownMenu.Portal>
 </DropdownMenu.Root>
 
-<p>{data.location.description}</p>
+<p class="mb-2">{data.location.description}</p>
 
 {#if $deleteMutation.isError}
   <p class="mt-2 text-error-500">{$deleteMutation.error.message}</p>
 {/if}
-<p class="mt-5">Add a location log to get started.</p>
 
-<button
-  type="button"
-  onclick={gotoAddLocationLog}
-  class="btn mt-2 preset-filled-primary-500"
->
-  Add Location Log
-  <MapPinPlus size={16} />
-</button>
+{#if data.location.locationLogs.length === 0}
+  <p class="mt-5">Add a location log to get started.</p>
+  <button
+    type="button"
+    onclick={gotoAddLocationLog}
+    class="btn mt-2 preset-filled-primary-500"
+  >
+    Add Location Log
+    <MapPinPlus size={16} />
+  </button>
+{:else}
+  {#each mapStore.mapPoints() as point (point.id)}
+    <LocationCard {point} />
+  {/each}
+{/if}
