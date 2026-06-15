@@ -1,11 +1,12 @@
-import type { LocationWithLogs } from "$lib/types";
+import type { LocationLog } from "$lib/types";
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
   const slug = params.slug;
+  const id = params.id;
 
-  const response = await fetch(`/api/locations/${slug}`);
+  const response = await fetch(`/api/locations/${slug}/logs/${id}`);
 
   if (!response.ok) {
     const body = await response.json();
@@ -13,9 +14,9 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
   }
 
   const data = await response.json();
-  const location = data.location as LocationWithLogs;
+  const log = data.log as LocationLog;
 
   return {
-    location,
+    log,
   };
 };
