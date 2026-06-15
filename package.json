@@ -60,11 +60,6 @@
     "valibot": "^1.1.0",
     "vite": "^6.2.6"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
   "lint-staged": {
     "*": "pnpm lint"
   }
