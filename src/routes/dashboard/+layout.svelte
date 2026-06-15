@@ -1,6 +1,7 @@
 <script lang="ts">
   import type {
     Location,
+    LocationLog,
     LocationWithLogs,
     MapPoint,
     SidebarItem,
@@ -12,9 +13,10 @@
   import DashboardNavItems from "$lib/components/DashboardNavItems.svelte";
   import LocationNavItems from "$lib/components/LocationNavItems.svelte";
 
+  import LogNavItems from "$lib/components/LogNavItems.svelte";
   import MapApp from "$lib/components/Map.svelte";
-  import NavItem from "$lib/components/NavItem.svelte";
 
+  import NavItem from "$lib/components/NavItem.svelte";
   import { SIDE_BY_SIDE_ROUTES } from "$lib/constants";
   import { setMapContext } from "$lib/context/map";
   import { createMapStore } from "$lib/stores/map.svelte";
@@ -28,11 +30,15 @@
   const isSideBySide = $derived(SIDE_BY_SIDE_ROUTES.has(page.route.id ?? ""));
   const locations = $derived<Location[] | undefined>(page.data.locations);
   const location = $derived<LocationWithLogs | undefined>(page.data.location);
+  const log = $derived<LocationLog | undefined>(page.data.log);
 
   const navGroup = $derived.by(() => {
     const id = page.route.id ?? "";
     if (id === "/dashboard" || id === "/dashboard/add") {
       return "dashboard";
+    }
+    if (id.startsWith("/dashboard/location/[slug]/[id]")) {
+      return "log";
     }
     if (id.startsWith("/dashboard/location/")) {
       return "location";
@@ -65,7 +71,6 @@
         ),
       }));
     }
-
     return [];
   });
 
@@ -83,6 +88,16 @@
         ? sidebarItems.map((item) => item.mapPoint)
         : [locationMapPoint];
     }
+
+    if (navGroup === "log" && location && log) {
+      const logMapPoint = createMapPointFromLocation(
+        log,
+        `/dashboard/location/${location.slug}/${log.id}`,
+      );
+
+      return [logMapPoint];
+    }
+
     return [];
   });
 
@@ -113,6 +128,8 @@
           <DashboardNavItems {sidebarItems} />
         {:else if navGroup === "location"}
           <LocationNavItems {location} {sidebarItems} />
+        {:else if navGroup === "log"}
+          <LogNavItems {location} {log} />
         {/if}
       {/snippet}
 
