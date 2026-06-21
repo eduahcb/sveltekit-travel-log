@@ -1,12 +1,11 @@
 <script lang="ts">
   import type { DateValue } from "@internationalized/date";
-  import type { PageProps } from "./$types";
   import { goto } from "$app/navigation";
+  import { page } from "$app/state";
   import { CalendarDate } from "@internationalized/date";
   import { EllipsisVertical, PenLine, Trash2 } from "@lucide/svelte";
   import { DropdownMenu } from "bits-ui";
 
-  const { data }: PageProps = $props();
   let open = $state(false);
   let buttonEl = $state<HTMLButtonElement>();
 
@@ -21,18 +20,22 @@
   }
 
   function gotoLogEdit() {
-    goto(`/dashboard/location/${data.location.slug}/${data.log.id}/edit`);
+    goto(
+      `/dashboard/location/${page.data.location.slug}/${page.data.log.id}/edit`,
+    );
   }
 </script>
 
 <div>
   <p>
-    {dateToDateValue(data.log.startedAt)} / {dateToDateValue(data.log.endedAt)}
+    {dateToDateValue(page.data.log.startedAt)} / {dateToDateValue(
+      page.data.log.endedAt,
+    )}
   </p>
 </div>
 
 <div class="flex gap-2 items-center">
-  <h1 class="h5 truncate">{data.log.name}</h1>
+  <h1 class="h5 truncate">{page.data.log.name}</h1>
   <button
     bind:this={buttonEl}
     type="button"
