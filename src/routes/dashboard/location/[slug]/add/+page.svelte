@@ -48,7 +48,9 @@
   }
 
   async function redirectToLocationPage() {
-    goto(`/dashboard/location/${data.location.slug}`);
+    goto(`/dashboard/location/${data.location.slug}`, {
+      invalidateAll: true,
+    });
   }
 
   onMount(() => {
