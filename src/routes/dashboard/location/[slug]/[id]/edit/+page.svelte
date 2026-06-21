@@ -1,36 +1,27 @@
 <script lang="ts">
   import type { LocationLogInsertData } from "$lib/types";
   import type { DateValue } from "@internationalized/date";
-  import type { PageProps } from "./$types";
   import { goto } from "$app/navigation";
+  import { page } from "$app/state";
   import DatePicker from "$lib/components/DatePicker.svelte";
   import FormField from "$lib/components/FormField.svelte";
   import LocationFormBase from "$lib/components/LocationFormBase.svelte";
   import { getMapContext } from "$lib/context/map";
-  import { fetchCreateLocationLog } from "$lib/http/location-log";
+  import { fetchUpdateLocationLog } from "$lib/http/location-log";
   import { LocationLogSchema } from "$lib/schema";
-  import {
-    CalendarDate,
-    getLocalTimeZone,
-    today,
-  } from "@internationalized/date";
-  import { Plus } from "@lucide/svelte";
+  import { CalendarDate } from "@internationalized/date";
+  import { MapPin } from "@lucide/svelte";
   import { onMount } from "svelte";
-
-  const { data }: PageProps = $props();
 
   const mapStore = getMapContext();
 
   const initialValues = {
-    name: "",
-    description: "",
-    lat: 0,
-    long: 0,
-    startedAt: today(getLocalTimeZone()).toDate(getLocalTimeZone()).getTime(),
-    endedAt: today(getLocalTimeZone())
-      .add({ days: 1 })
-      .toDate(getLocalTimeZone())
-      .getTime(),
+    name: page.data.log.name,
+    description: page.data.log.description,
+    lat: page.data.log.lat,
+    long: page.data.log.long,
+    startedAt: page.data.log.startedAt,
+    endedAt: page.data.log.endedAt,
   } as LocationLogInsertData;
 
   function dateToDateValue(timestamp: number): DateValue {
@@ -43,18 +34,25 @@
     );
   }
 
-  async function addLocationLog(log: LocationLogInsertData) {
-    await fetchCreateLocationLog(log, data.location.slug);
+  async function updateLog(log: LocationLogInsertData) {
+    await fetchUpdateLocationLog(
+      log,
+      page.data.location.slug,
+      page.data.log.id,
+    );
   }
 
-  async function redirectToLocationPage() {
-    goto(`/dashboard/location/${data.location.slug}`, {
+  async function redirectToLogPage() {
+    goto(`/dashboard/location/${page.data.location.slug}/${page.data.log.id}`, {
       invalidateAll: true,
     });
   }
 
   onMount(() => {
-    mapStore.addMarker = { lat: data.location.lat, lng: data.location.long };
+    mapStore.addMarker = {
+      lat: page.data.log.lat,
+      lng: page.data.log.long,
+    };
     mapStore.showAddMarker = true;
 
     return () => (mapStore.showAddMarker = false);
@@ -65,13 +63,13 @@
   <LocationFormBase
     {initialValues}
     schema={LocationLogSchema}
-    redirectOnCancel={`/dashboard/location/${data.location.slug}`}
-    redirectOnConfirm={`/dashboard/location/${data.location.slug}`}
-    confirmLabel="Add"
-    ConfirmIcon={Plus}
+    redirectOnCancel={`/dashboard/location/${page.data.location.slug}`}
+    redirectOnConfirm={`/dashboard/location/${page.data.location.slug}`}
+    confirmLabel="Update Log"
+    ConfirmIcon={MapPin}
     isPending={false}
-    onsubmit={addLocationLog}
-    onsubmitComplete={redirectToLocationPage}
+    onsubmit={updateLog}
+    onsubmitComplete={redirectToLogPage}
   >
     {#snippet fields(form)}
       <form.Field name="name">
