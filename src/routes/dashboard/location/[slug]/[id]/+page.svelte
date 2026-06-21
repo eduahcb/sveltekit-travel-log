@@ -1,10 +1,19 @@
 <script lang="ts">
+  import type { LocationLog } from "$lib/types";
   import type { DateValue } from "@internationalized/date";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
+  import { fetchDeleteLocationLog } from "$lib/http/location-log";
   import { CalendarDate } from "@internationalized/date";
-  import { EllipsisVertical, PenLine, Trash2 } from "@lucide/svelte";
+  import {
+    EllipsisVertical,
+    LoaderCircle,
+    PenLine,
+    Trash2,
+  } from "@lucide/svelte";
+  import { createMutation } from "@tanstack/svelte-query";
   import { DropdownMenu } from "bits-ui";
+  import { HTTPError } from "ky";
 
   let open = $state(false);
   let buttonEl = $state<HTMLButtonElement>();
@@ -17,6 +26,38 @@
       date.getMonth() + 1,
       date.getDate(),
     );
+  }
+  const deleteMutation = createMutation({
+    mutationKey: ["location-log", page.data.log.id],
+    mutationFn: async ({ slug, logId }: { slug: string; logId: number }) => {
+      try {
+        const data = (await fetchDeleteLocationLog(slug, logId)) as { log: LocationLog };
+
+        return data;
+      } catch (error) {
+        if (error instanceof HTTPError && error.response.status === 404) {
+          const result = (await error.response.json()) as { msg: string };
+          throw new Error(result.msg);
+        }
+
+        throw new Error("Unknown error");
+      }
+    },
+  });
+
+  async function deleteLog() {
+    try {
+      await $deleteMutation.mutateAsync({
+        slug: page.data.location.slug,
+        logId: page.data.log.id,
+      });
+
+      goto(`/dashboard/location/${page.data.location.slug}`, {
+        invalidateAll: true,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function gotoLogEdit() {
@@ -57,12 +98,18 @@
       >
         <div class="w-full">
           <button
-            onclick={() => {}}
+            onclick={deleteLog}
             type="button"
             class="w-full btn preset-tonal-surface"
+            disabled={$deleteMutation.isPending}
           >
-            <Trash2 size={16} />
-            Delete
+            {#if $deleteMutation.isPending}
+              <LoaderCircle size={16} />
+              Deleting...
+            {:else}
+              <Trash2 size={16} />
+              Delete
+            {/if}
           </button>
         </div>
       </DropdownMenu.Item>

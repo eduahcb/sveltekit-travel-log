@@ -1,17 +1,29 @@
 import type { RequestHandler } from "./$types";
 import { LocationLogSchema } from "$lib/schema";
 import { AuthenticatedRequestHandler } from "$lib/server/auth-request-handler";
-import { findLocationLog, updateLocationLog } from "$lib/server/db/queries/location-log";
+import { findLocation } from "$lib/server/db/queries/location";
 
+import { deleteLocationLog, findLocationLog, updateLocationLog } from "$lib/server/db/queries/location-log";
 import { formatValibotIssues } from "$lib/utils/valibot-format-error";
 import { json } from "@sveltejs/kit";
 import * as v from "valibot";
 
 export const GET: RequestHandler = AuthenticatedRequestHandler(async ({ locals, params }) => {
   const id = params.id;
+  const slug = params.slug;
   const userId = Number(locals.session!.user.id);
 
   try {
+    const location = await findLocation(userId, slug);
+
+    if (!location) {
+      return json({
+        msg: "Location not found",
+      }, {
+        status: 404,
+      });
+    }
+
     const log = await findLocationLog(userId, Number(id));
 
     if (!log) {
@@ -37,6 +49,7 @@ export const GET: RequestHandler = AuthenticatedRequestHandler(async ({ locals, 
 
 export const PUT: RequestHandler = AuthenticatedRequestHandler(async ({ request, locals, params }) => {
   const id = params.id;
+  const slug = params.slug;
   const userId = Number(locals.session!.user.id);
   const body = await request.json();
 
@@ -51,6 +64,16 @@ export const PUT: RequestHandler = AuthenticatedRequestHandler(async ({ request,
   const validatedData = result.output;
 
   try {
+    const location = await findLocation(userId, slug);
+
+    if (!location) {
+      return json({
+        msg: "Location not found",
+      }, {
+        status: 404,
+      });
+    }
+
     const updatedLog = await updateLocationLog(userId, Number(id), validatedData);
 
     if (!updatedLog) {
@@ -66,6 +89,45 @@ export const PUT: RequestHandler = AuthenticatedRequestHandler(async ({ request,
     });
   }
   catch {
+    return json({
+      msg: "Internal server error",
+    }, {
+      status: 500,
+    });
+  }
+});
+
+export const DELETE: RequestHandler = AuthenticatedRequestHandler(async ({ locals, params }) => {
+  const id = params.id;
+  const slug = params.slug;
+  const userId = Number(locals.session!.user.id);
+
+  try {
+    const location = await findLocation(userId, slug);
+
+    if (!location) {
+      return json({
+        msg: "Location not found",
+      }, {
+        status: 404,
+      });
+    }
+
+    const log = await deleteLocationLog(userId, Number(id));
+
+    if (!log) {
+      return json({
+        msg: "Log not found",
+      }, {
+        status: 404,
+      });
+    }
+
+    return json({
+      log,
+    });
+  } catch (err: any) {
+    console.error(err);
     return json({
       msg: "Internal server error",
     }, {
