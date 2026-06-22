@@ -1,0 +1,37 @@
+services:
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs
+    command: >
+      server
+      -dir=/data
+      -ip.bind=0.0.0.0
+      -filer
+      -s3
+    ports:
+      - "9333:9333" # master UI / API
+      - "19333:19333" # master gRPC
+      - "8082:8080" # volume server (8080 is used locally by Turso)
+      - "8888:8888" # filer UI / API
+      - "18888:18888" # filer gRPC
+      - "8333:8333" # S3 API
+    volumes:
+      - ./seaweedfs/data:/data
+    networks:
+      - seaweedfs
+
+  seaweedfs-admin:
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs-admin
+    command: admin -masters=seaweedfs:9333 -port=23646 -dataDir=/data
+    depends_on:
+      - seaweedfs
+    ports:
+      - "23646:23646" # Admin web UI (create/manage S3 buckets here)
+    volumes:
+      - ./seaweedfs/admin-data:/data
+    networks:
+      - seaweedfs
+
+networks:
+  seaweedfs:
