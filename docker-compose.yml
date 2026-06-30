@@ -23,13 +23,13 @@ services:
   seaweedfs-admin:
     image: chrislusf/seaweedfs:latest
     container_name: seaweedfs-admin
-    command: admin -masters=seaweedfs:9333 -port=23646 -dataDir=/data
+    command: admin -master=seaweedfs:9333 -port=23646 -dataDir=/data
     depends_on:
       - seaweedfs
     ports:
       - "23646:23646" # Admin web UI (create/manage S3 buckets here)
     volumes:
-      - ./seaweedfs/admin-data:/data
+      - ./seaweedfs/data:/data
     networks:
       - seaweedfs
 
