@@ -2,7 +2,7 @@
   import type { Location, LocationLog } from "$lib/types";
   import NavItem from "$lib/components/NavItem.svelte";
 
-  import { ArrowLeft, MapPin } from "@lucide/svelte";
+  import { ArrowLeft, Images, MapPin } from "@lucide/svelte";
 
   type Props = {
     location: Location | undefined;
@@ -32,5 +32,12 @@
     label="Edit log"
   >
     <MapPin />
+  </NavItem>
+
+  <NavItem
+    href={`/dashboard/location/${location.slug}/${log.id}/images`}
+    label="Manage Images"
+  >
+    <Images />
   </NavItem>
 {/if}

@@ -1,4 +1,4 @@
-import type { LocationLog } from "$lib/types";
+import type { LocationLogWithImages } from "$lib/types";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async ({ fetch, params }) => {
   }
 
   const data = await response.json();
-  const log = data.log as LocationLog;
+  const log = data.log as LocationLogWithImages;
 
   return {
     log,
