@@ -5,7 +5,7 @@ export function createS3Client() {
   return new S3Client({
     region: S3_REGION,
     endpoint: S3_ENDPOINT,
-    forcePathStyle: S3_ENDPOINT.includes("localhost"),
+    forcePathStyle: true,
     credentials: {
       accessKeyId: S3_ACCESS_KEY,
       secretAccessKey: S3_SECRET_KEY,
