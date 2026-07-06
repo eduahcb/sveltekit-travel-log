@@ -51,7 +51,7 @@
   onload={() => {
     mapIsLoaded = true;
   }}
-  onclick={handleMapClick}
+  ondblclick={handleMapClick}
   bind:map={mapStore.map}
   center={CENTER_BRASIL as LngLatLike}
   zoom={ZOOM_MAP}
