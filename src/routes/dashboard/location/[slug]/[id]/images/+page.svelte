@@ -1,8 +1,12 @@
 <script lang="ts">
+  import type { LocationLogImage } from "$lib/types";
   import { invalidateAll } from "$app/navigation";
   import { page } from "$app/state";
-  import ImagesList from "$lib/components/ImagesList.svelte";
+  import DeleteImageModal from "$lib/components/DeleteImageModal.svelte";
+  import ImageGallery from "$lib/components/ImageGallery.svelte";
+  import ImagePreview from "$lib/components/ImagesPreview.svelte";
   import {
+    fetchDeleteImage,
     fetchInsertImage,
     fetchSignLogImage,
     fetchUploadImage,
@@ -16,6 +20,8 @@
   let loading = $state(false);
   let filesRef = $state<HTMLInputElement | null>();
   let errorMessage = $state("");
+  let isDeleteModalOpen = $state(false);
+  let selectedImage = $state<LocationLogImage | undefined>(undefined);
 
   const previewURL = $derived.by(() => {
     return image ? URL.createObjectURL(image) : undefined;
@@ -37,6 +43,10 @@
 
   const uploadImageMutation = createMutation({
     mutationFn: fetchUploadImage,
+  });
+
+  const deleImageMutation = createMutation({
+    mutationFn: fetchDeleteImage,
   });
 
   function uploadImage() {
@@ -116,7 +126,44 @@
     });
     previewImage.src = previewURL;
   }
+
+  function deleteImage(image: LocationLogImage) {
+    isDeleteModalOpen = true;
+    selectedImage = image;
+  }
+
+  function cancelImageDeletion() {
+    isDeleteModalOpen = true;
+    selectedImage = undefined;
+  }
+
+  function confirmDeleteImage() {
+    if (!selectedImage) {
+      return;
+    }
+
+    $deleImageMutation.mutate(
+      {
+        slug: page.data.location.slug,
+        id: page.data.log.id,
+        imageId: selectedImage.id,
+      },
+      {
+        onSuccess: () => {
+          isDeleteModalOpen = false;
+          invalidateAll();
+        },
+      },
+    );
+  }
 </script>
+
+<DeleteImageModal
+  open={isDeleteModalOpen}
+  onCancel={cancelImageDeletion}
+  onConfirm={confirmDeleteImage}
+  isPending={$deleImageMutation.isPending}
+/>
 
 <div class="p-3">
   <h1 class="h5 truncate mb-2">
@@ -168,6 +215,20 @@
       </button>
     </div>
 
-    <ImagesList images={page.data.log.images} />
+    <ImageGallery>
+      {#each page.data.log.images as image (image.id)}
+        <ImagePreview {image}>
+          {#snippet action()}
+            <button
+              onclick={() => deleteImage(image)}
+              type="button"
+              class="btn-sm preset-tonal-error rounded"
+            >
+              Delete
+            </button>
+          {/snippet}
+        </ImagePreview>
+      {/each}
+    </ImageGallery>
   </div>
 </div>
