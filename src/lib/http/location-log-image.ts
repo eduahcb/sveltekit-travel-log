@@ -46,3 +46,12 @@ type InsertImage = {
 export async function fetchInsertImage({ slug, id, key, width, height }: InsertImage) {
   return await api.post(`/api/locations/${slug}/logs/${id}/images`, { json: { key, width, height } }).json();
 }
+
+type DeleteImage = {
+  slug: string;
+  id: number;
+  imageId: number;
+};
+export async function fetchDeleteImage({ slug, id, imageId }: DeleteImage) {
+  await api.delete(`/api/locations/${slug}/logs/${id}/images/${imageId}`).json();
+}
