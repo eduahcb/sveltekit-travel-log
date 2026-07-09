@@ -3,10 +3,13 @@
   import type { DateValue } from "@internationalized/date";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
+  import ImageGallery from "$lib/components/ImageGallery.svelte";
+  import ImagePreview from "$lib/components/ImagesPreview.svelte";
   import { fetchDeleteLocationLog } from "$lib/http/location-log";
   import { CalendarDate } from "@internationalized/date";
   import {
     EllipsisVertical,
+    Images,
     LoaderCircle,
     PenLine,
     Trash2,
@@ -31,7 +34,9 @@
     mutationKey: ["location-log", page.data.log.id],
     mutationFn: async ({ slug, logId }: { slug: string; logId: number }) => {
       try {
-        const data = (await fetchDeleteLocationLog(slug, logId)) as { log: LocationLog };
+        const data = (await fetchDeleteLocationLog(slug, logId)) as {
+          log: LocationLog;
+        };
 
         return data;
       } catch (error) {
@@ -85,6 +90,26 @@
   >
     <EllipsisVertical />
   </button>
+</div>
+
+<div class="mt-2 w-full">
+  {#if page.data.log.images.length}
+    <ImageGallery>
+      {#each page.data.log.images as image (image.id)}
+        <ImagePreview {image} />
+      {/each}
+    </ImageGallery>
+  {:else}
+    <div class="mt-6">
+      <a
+        class="btn preset-filled-primary-500"
+        href={`/dashboard/location/${page.data.location.slug}/${page.data.log.id}/images`}
+      >
+        <Images />
+        Manage Images
+      </a>
+    </div>
+  {/if}
 </div>
 
 <DropdownMenu.Root bind:open>

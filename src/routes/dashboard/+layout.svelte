@@ -145,7 +145,7 @@
       "flex-1 grid",
       isSideBySide
         ? "grid-cols-[400px_auto]"
-        : "grid-cols-1 grid-rows-[30%_70%]",
+        : "grid-cols-1 grid-rows-[32%_68%]",
     ]}
   >
     <div class="p-1 overflow-y-auto">

@@ -165,13 +165,13 @@
   isPending={$deleImageMutation.isPending}
 />
 
-<div class="p-3">
+<div class="p-3 overflow-y-hidden">
   <h1 class="h5 truncate mb-2">
     Manage "{page.data.log.name}" Images
   </h1>
 
   <div class="flex gap-2 w-full">
-    <div class="w-[250px]">
+    <div class="min-w-[250px] w-[250px]">
       <div
         class="relative h-28 bg-surface-500 mb-1 flex items-center justify-center p-1"
       >
