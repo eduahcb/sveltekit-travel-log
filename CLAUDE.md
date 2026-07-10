@@ -53,7 +53,7 @@ Copy `.env.example` to `.env`. Required vars:
 - **Drizzle ORM** + **Turso (libSQL/SQLite)** — database; local dev uses `turso dev --db-file local.db`
 - **MapLibre GL** + **svelte-maplibre-gl** — interactive maps
 - **TanStack Query** — client-side mutation state
-- **sveltekit-superforms** + **valibot** — form validation (client + server)
+- **@tanstack/svelte-form** + **valibot** — form validation (client + server)
 - **Skeleton UI** — component library (Navigation, modals, etc.)
 - **Tailwind CSS v4** — styling
 - **ky** — HTTP client for API calls from the browser
