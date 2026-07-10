@@ -39,7 +39,7 @@ This is a SvelteKit adaptation of the "Travel Log" project taught by CJ on [Synt
 
 **Add a location**
 
-<video src="docs/media/add-location.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/eduahcb/sveltekit-travel-log/main/docs/media/add-location.mp4" controls width="100%"></video>
 
 **Location detail**
 
@@ -47,7 +47,7 @@ This is a SvelteKit adaptation of the "Travel Log" project taught by CJ on [Synt
 
 **Add a log entry**
 
-<video src="docs/media/add-log.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/eduahcb/sveltekit-travel-log/main/docs/media/add-log.mp4" controls width="100%"></video>
 
 **Image gallery**
 
@@ -55,7 +55,7 @@ This is a SvelteKit adaptation of the "Travel Log" project taught by CJ on [Synt
 
 **Uploading images**
 
-<video src="docs/media/image-upload.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/eduahcb/sveltekit-travel-log/main/docs/media/image-upload.mp4" controls width="100%"></video>
 
 ## Features
 

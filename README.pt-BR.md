@@ -39,7 +39,7 @@ Este projeto é uma adaptação em SvelteKit do projeto "Travel Log" ensinado pe
 
 **Adicionar localização**
 
-<video src="docs/media/add-location.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/eduahcb/sveltekit-travel-log/main/docs/media/add-location.mp4" controls width="100%"></video>
 
 **Detalhe da localização**
 
@@ -47,7 +47,7 @@ Este projeto é uma adaptação em SvelteKit do projeto "Travel Log" ensinado pe
 
 **Adicionar registro**
 
-<video src="docs/media/add-log.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/eduahcb/sveltekit-travel-log/main/docs/media/add-log.mp4" controls width="100%"></video>
 
 **Galeria de imagens**
 
@@ -55,7 +55,7 @@ Este projeto é uma adaptação em SvelteKit do projeto "Travel Log" ensinado pe
 
 **Upload de imagens**
 
-<video src="docs/media/image-upload.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/eduahcb/sveltekit-travel-log/main/docs/media/image-upload.mp4" controls width="100%"></video>
 
 ## Funcionalidades
 
