@@ -1,5 +1,8 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
+  import { navigating } from "$app/state";
+
+  import { LoaderCircle } from "@lucide/svelte";
   import { Navigation } from "@skeletonlabs/skeleton-svelte";
 
   type NavItemProps = {
@@ -13,6 +16,8 @@
   // eslint-disable-next-line style/operator-linebreak
   const { href, children, label, onmouseenter, onmouseleave }: NavItemProps =
     $props();
+
+  const isNavigating = $derived(navigating.to?.url.pathname === href);
 </script>
 
 <div
@@ -22,6 +27,10 @@
   class="w-full"
 >
   <Navigation.Tile aspect="auto" labelExpanded={label} {href} base="group flex">
-    {@render children()}
+    {#if isNavigating}
+      <LoaderCircle class="animate-spin" />
+    {:else}
+      {@render children()}
+    {/if}
   </Navigation.Tile>
 </div>

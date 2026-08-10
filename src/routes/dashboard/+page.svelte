@@ -1,12 +1,16 @@
 <script lang="ts">
-  import LocationCard from "$lib/components/LocationCard.svelte";
+  import { navigating } from "$app/state";
 
+  import LocationCard from "$lib/components/LocationCard.svelte";
   import { getMapContext } from "$lib/context/map";
-  import { Plus } from "@lucide/svelte";
+  import { LoaderCircle, Plus } from "@lucide/svelte";
 
   const mapStore = getMapContext();
 
   const hasPoints = $derived(mapStore.mapPoints().length > 0);
+  const isNavigatingToAdd = $derived(
+    navigating.to?.url.pathname === "/dashboard/add",
+  );
 </script>
 
 <h1 class="h4 mb-4">Locations</h1>
@@ -19,7 +23,11 @@
 
     <a href="/dashboard/add" class="btn preset-filled-primary-500">
       Add a location
-      <Plus />
+      {#if isNavigatingToAdd}
+        <LoaderCircle class="animate-spin" />
+      {:else}
+        <Plus />
+      {/if}
     </a>
   {/each}
 </div>
