@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { LngLatLike, MapMouseEvent } from "maplibre-gl";
-  import { CENTER_BRASIL, ZOOM_MAP } from "$lib/constants";
+  import { navigating } from "$app/state";
 
+  import { CENTER_BRASIL, ZOOM_MAP } from "$lib/constants";
   import { getMapContext } from "$lib/context/map";
   import { getThemeContext } from "$lib/context/theme";
 
-  import { MapPin } from "@lucide/svelte";
+  import { LoaderCircle, MapPin } from "@lucide/svelte";
 
   import { untrack } from "svelte";
 
@@ -91,8 +92,12 @@
       {/snippet}
 
       <Popup class="text-black" open={isHovered} closeButton={false}>
-        <a href={point.to} class="text-sm anchor">
+        {@const isNavigatingToPoint = navigating.to?.url.pathname === point.to}
+        <a href={point.to} class="text-sm anchor flex items-center gap-1">
           {point.name}
+          {#if isNavigatingToPoint}
+            <LoaderCircle class="animate-spin" size={14} />
+          {/if}
         </a>
       </Popup>
     </Marker>

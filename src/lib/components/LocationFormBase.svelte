@@ -4,6 +4,7 @@
   import type { Component, Snippet } from "svelte";
   import type { GenericSchema } from "valibot";
   import { beforeNavigate, goto } from "$app/navigation";
+  import { navigating } from "$app/state";
   import { getMapContext } from "$lib/context/map";
   import { fetchSearchLocations } from "$lib/http/search";
   import { ArrowLeft, LoaderCircle, MapPin, Plus } from "@lucide/svelte";
@@ -47,6 +48,10 @@
 
   const confirmModal = $state({ open: false });
   let searchForm: HTMLFormElement;
+
+  const isNavigatingToConfirm = $derived(
+    navigating.to?.url.pathname === redirectOnConfirm,
+  );
 
   const coordinates = $derived.by(() => {
     const ll = mapLibre.LngLat.convert(mapStore.addMarker);
@@ -218,11 +223,11 @@
 
     <button
       type="submit"
-      disabled={isPending}
+      disabled={isPending || isNavigatingToConfirm}
       class="btn preset-filled-primary-500"
     >
       {confirmLabel}
-      {#if isPending}
+      {#if isPending || isNavigatingToConfirm}
         <LoaderCircle class="animate-spin" />
       {:else if ConfirmIcon}
         <ConfirmIcon />

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
   import { goto } from "$app/navigation";
+  import { navigating } from "$app/state";
   import DeleteLocationModal from "$lib/components/DeleteLocationModal.svelte";
 
   import LocationCard from "$lib/components/LocationCard.svelte";
@@ -8,6 +9,7 @@
   import { fetchDeleteLocation } from "$lib/http/location";
   import {
     EllipsisVertical,
+    LoaderCircle,
     MapPinPlus,
     PenLine,
     Trash2,
@@ -42,8 +44,11 @@
     },
   });
 
+  const editHref = $derived(`/dashboard/location/${data.location.slug}/edit`);
+  const isNavigatingToEdit = $derived(navigating.to?.url.pathname === editHref);
+
   function gotoLocationEdit() {
-    goto(`/dashboard/location/${data.location.slug}/edit`);
+    goto(editHref);
   }
 
   function gotoAddLocationLog() {
@@ -73,6 +78,9 @@
 
 <div class="flex gap-2 items-center">
   <h1 class="h5 truncate">{data.location.name}</h1>
+  {#if isNavigatingToEdit}
+    <LoaderCircle class="animate-spin" size={20} />
+  {/if}
   <button
     bind:this={buttonEl}
     type="button"
